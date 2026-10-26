@@ -5,7 +5,6 @@ import { AnnouncementBar } from '@/components/layout/AnnouncementBar';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Hero } from '@/components/home/Hero';
-import { TrustStrip } from '@/components/home/TrustStrip';
 import { CategoryBanners } from '@/components/home/CategoryBanners';
 import { BestSellers } from '@/components/home/BestSellers';
 import { CategoryShowcase } from '@/components/home/CategoryShowcase';
@@ -33,9 +32,6 @@ export default function HomePage() {
       <main className="flex-1">
         {/* 4. Hero Section with Floating Smoke Animation & Dual CTAs */}
         <Hero />
-
-        {/* 5. Trust Strip (Charcoal Free, Temple Flowers, Ayurveda, 45+ Min Burn) */}
-        <TrustStrip />
 
         {/* 6. Shop by Category Banners (Sticks 250g vs Cones 60 pcs) */}
         <CategoryBanners />
