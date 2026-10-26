@@ -68,6 +68,7 @@ export default function AdminProductsPage() {
   const [formIsActive, setFormIsActive] = useState(true);
   const [formIsFeatured, setFormIsFeatured] = useState(false);
   const [newImageUrl, setNewImageUrl] = useState('');
+  const [targetImageCount, setTargetImageCount] = useState<number>(4);
 
   // Auto-slug generator
   const handleNameChange = (name: string) => {
@@ -100,6 +101,7 @@ export default function AdminProductsPage() {
     ]);
     setFormIsActive(true);
     setFormIsFeatured(false);
+    setTargetImageCount(1);
     setIsModalOpen(true);
   };
 
@@ -120,6 +122,7 @@ export default function AdminProductsPage() {
     setFormImages(product.images.length > 0 ? product.images : [
       'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=1000&auto=format&fit=crop'
     ]);
+    setTargetImageCount(Math.min(6, Math.max(1, product.images.length || 1)));
     setFormIsActive(product.is_active ?? true);
     setFormIsFeatured(product.is_featured);
     setIsModalOpen(true);
@@ -145,6 +148,7 @@ export default function AdminProductsPage() {
     }
 
     const notes = formFragrance.split(',').map((s) => s.trim()).filter(Boolean);
+    const activeImages = formImages.slice(0, targetImageCount).filter(Boolean);
 
     if (editingProduct) {
       updateProduct(editingProduct.id, {
@@ -162,7 +166,7 @@ export default function AdminProductsPage() {
         variant_label: formVariantLabel,
         burn_time: formBurnTime,
         description: formDescription,
-        images: formImages.length > 0 ? formImages : editingProduct.images,
+        images: activeImages.length > 0 ? activeImages : editingProduct.images,
         is_active: formIsActive,
         is_featured: formIsFeatured,
       });
@@ -190,7 +194,9 @@ export default function AdminProductsPage() {
         is_bestseller: false,
         is_featured: formIsFeatured,
         is_active: formIsActive,
-        images: formImages,
+        images: activeImages.length > 0 ? activeImages : [
+          'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=1000&auto=format&fit=crop',
+        ],
       });
     }
 
@@ -693,43 +699,113 @@ export default function AdminProductsPage() {
             />
           </div>
 
-          {/* Multi-Image Upload Area */}
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-[#7A5230] mb-1.5">
-              Product Images ({formImages.length})
-            </label>
-
-            {/* Thumbnail Previews */}
-            <div className="flex flex-wrap gap-3 mb-3">
-              {formImages.map((img, idx) => (
-                <div
-                  key={idx}
-                  className="relative h-16 w-16 rounded-xl overflow-hidden border border-[#E3D4BD] group"
-                >
-                  <Image src={img} alt="Thumbnail" fill className="object-cover" />
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveImage(idx)}
-                    className="absolute top-1 right-1 bg-red-600 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </div>
-              ))}
+          {/* Image Count Selector and Dynamic Slots */}
+          <div className="space-y-4 pt-2 border-t border-[#E3D4BD]">
+            <div className="p-3.5 bg-[#FAF7F2] rounded-2xl border border-[#E3D4BD] space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold uppercase tracking-wider text-[#C8922A]">
+                  📸 Kitne Images Upload Karne Hain? (Select Count)
+                </label>
+                <span className="text-[11px] text-[#7A5230] font-medium">
+                  Photo 1 is Main Thumbnail
+                </span>
+              </div>
+              <select
+                value={targetImageCount}
+                onChange={(e) => {
+                  const count = parseInt(e.target.value, 10);
+                  setTargetImageCount(count);
+                }}
+                className="w-full rounded-xl border border-[#E3D4BD] bg-white px-3 py-2 text-xs text-[#0F0D0B] font-semibold focus:outline-none focus:ring-2 focus:ring-[#C8922A]"
+              >
+                <option value={1}>1 Image (Sirf 1 Thumbnail / Primary Cover)</option>
+                <option value={2}>2 Images (1 Thumbnail + 1 Gallery Image)</option>
+                <option value={3}>3 Images (1 Thumbnail + 2 Gallery Images)</option>
+                <option value={4}>4 Images (1 Thumbnail + 3 Gallery Images)</option>
+                <option value={5}>5 Images (1 Thumbnail + 4 Gallery Images)</option>
+                <option value={6}>6 Images (1 Thumbnail + 5 Gallery Images)</option>
+              </select>
+              <p className="text-[11px] text-[#7A5230]">
+                💡 Niche sirf utne hi upload fields dikhenge jitne aapne select kiye hain.
+              </p>
             </div>
 
-            {/* Add Image by URL input */}
-            <div className="flex gap-2">
-              <input
-                type="url"
-                value={newImageUrl}
-                onChange={(e) => setNewImageUrl(e.target.value)}
-                placeholder="Paste high-res image URL (e.g. Unsplash or Cloudinary)..."
-                className="flex-1 rounded-xl border border-[#E3D4BD] bg-white px-3 py-2 text-xs text-[#0F0D0B] focus:outline-none focus:ring-2 focus:ring-[#C8922A]"
-              />
-              <Button type="button" variant="outline" size="sm" onClick={handleAddImage}>
-                Add Photo
-              </Button>
+            {/* Dynamic Slots */}
+            <div className="space-y-3">
+              {Array.from({ length: targetImageCount }).map((_, idx) => {
+                const label =
+                  idx === 0
+                    ? 'Photo 1 (Thumbnail / Primary Cover) *'
+                    : `Photo ${idx + 1} (Gallery Photo / Video ${idx})`;
+                const currentVal = formImages[idx] || '';
+
+                return (
+                  <div
+                    key={idx}
+                    className="p-3 rounded-2xl bg-white border border-[#E3D4BD] space-y-2"
+                  >
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-bold text-[#0F0D0B]">{label}</span>
+                      {currentVal && (
+                        <span className="text-[10px] text-emerald-600 font-semibold">
+                          ✓ Image Set
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      {/* Thumbnail Preview */}
+                      <div className="relative h-14 w-14 rounded-xl overflow-hidden bg-[#FAF7F2] border border-[#E3D4BD] flex items-center justify-center shrink-0">
+                        {currentVal ? (
+                          <Image
+                            src={currentVal}
+                            alt={`Preview ${idx + 1}`}
+                            fill
+                            className="object-cover"
+                          />
+                        ) : (
+                          <span className="text-[10px] text-[#AFA8A2] text-center px-1">
+                            No image
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex-1 flex gap-2">
+                        <input
+                          type="text"
+                          value={currentVal}
+                          onChange={(e) => {
+                            const newArr = [...formImages];
+                            newArr[idx] = e.target.value;
+                            setFormImages(newArr);
+                          }}
+                          placeholder={
+                            idx === 0
+                              ? '/images/products/... or image URL (Primary Cover)'
+                              : `/images/products/... or image URL (Gallery ${idx})`
+                          }
+                          required={idx === 0}
+                          className="flex-1 rounded-xl border border-[#E3D4BD] bg-[#FAF7F2] px-3 py-2 text-xs text-[#0F0D0B] focus:outline-none focus:ring-2 focus:ring-[#C8922A]"
+                        />
+                        {currentVal && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newArr = [...formImages];
+                              newArr[idx] = '';
+                              setFormImages(newArr.filter(Boolean));
+                            }}
+                            className="p-2 text-red-500 hover:bg-red-50 rounded-lg text-xs"
+                            title="Clear"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
