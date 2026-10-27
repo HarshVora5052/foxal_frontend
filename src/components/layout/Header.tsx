@@ -188,15 +188,16 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu }) => {
               {isAuthenticated && (
                 <button
                   onClick={openCart}
-                  className="relative flex items-center gap-2 bg-[#0F0D0B] text-[#FAF7F2] hover:bg-[#272320] px-3.5 py-2 rounded-xl transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-[#C8922A] animate-in fade-in duration-300"
+                  className="relative p-2.5 rounded-xl text-[#272320] hover:text-[#C8922A] hover:bg-[#F6EFE4] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C8922A]"
                   aria-label={`Sacred cart (${totalCartItems} items)`}
                   title="View Sacred Cart"
                 >
-                  <ShoppingBag className="h-4 w-4 text-[#DFB15B]" />
-                  <span className="hidden sm:inline text-xs font-semibold">Cart</span>
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#C8922A] text-[11px] font-bold text-white">
-                    {totalCartItems}
-                  </span>
+                  <ShoppingBag className="h-5 w-5" />
+                  {totalCartItems > 0 && (
+                    <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#C8922A] text-[10px] font-bold text-white shadow-sm">
+                      {totalCartItems}
+                    </span>
+                  )}
                 </button>
               )}
 
