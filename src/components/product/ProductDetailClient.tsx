@@ -105,7 +105,8 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
               alt={product.name || 'FOXAL Incense'}
               fill
               priority
-              sizes="(max-width: 640px) 340px, 400px"
+              quality={95}
+              sizes="(max-width: 1024px) 100vw, 800px"
               style={{ objectFit: 'contain' }}
               className="object-contain object-center p-2 sm:p-3 transition-all duration-200"
             />
