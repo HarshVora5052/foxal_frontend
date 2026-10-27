@@ -1,6 +1,8 @@
 import { PRODUCTS, Product, CATEGORIES, Category, Review } from './mock';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const BACKEND_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  (process.env.NODE_ENV === 'production' ? 'http://foxal.gamer.free' : 'http://localhost:8000');
 
 export interface ProductFilterParams {
   category?: string;

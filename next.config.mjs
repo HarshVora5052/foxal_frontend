@@ -13,6 +13,14 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'www.foxal.in',
       },
+      {
+        protocol: 'http',
+        hostname: 'foxal.gamer.free',
+      },
+      {
+        protocol: 'https',
+        hostname: 'foxal.gamer.free',
+      },
     ],
   },
   async rewrites() {
