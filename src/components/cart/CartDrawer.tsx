@@ -202,9 +202,9 @@ export const CartDrawer: React.FC = () => {
                 router.push('/checkout');
               }}
               rightIcon={<ArrowRight className="h-4 w-4 shrink-0" />}
-              className="text-sm font-bold py-3 shadow-md justify-center whitespace-nowrap"
+              className="text-sm font-semibold py-2.5 shadow-sm justify-center"
             >
-              Proceed to Checkout (₹{finalTotal})
+              Proceed to Checkout
             </Button>
 
             <div className="text-center">

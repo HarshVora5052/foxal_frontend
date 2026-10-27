@@ -309,7 +309,7 @@ export default function CartPage() {
 
                 <Button
                   variant="primary"
-                  size="lg"
+                  size="md"
                   fullWidth
                   onClick={() => {
                     if (!isAuthenticated) {
@@ -320,9 +320,9 @@ export default function CartPage() {
                     router.push('/checkout');
                   }}
                   rightIcon={<ArrowRight className="h-4 w-4" />}
-                  className="mt-4 font-semibold tracking-wide"
+                  className="mt-4 font-semibold"
                 >
-                  Proceed to Checkout (₹{finalTotal})
+                  Proceed to Checkout
                 </Button>
 
                 <div className="pt-2 text-center text-[11px] text-[#7A5230] flex items-center justify-center gap-1.5">
