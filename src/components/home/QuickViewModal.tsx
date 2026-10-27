@@ -9,7 +9,10 @@ import { Rating } from '@/components/ui/Rating';
 import { Button } from '@/components/ui/Button';
 import { QuantitySelector } from '@/components/ui/QuantitySelector';
 import { useCartStore } from '@/store/useCartStore';
-import { ShoppingBag, Clock, Sparkles, ShieldCheck, Heart } from 'lucide-react';
+import { useAuthStore } from '@/store/useAuthStore';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import { ShoppingBag, Sparkles, ShieldCheck, Heart } from 'lucide-react';
 
 interface QuickViewModalProps {
   product: Product | null;
@@ -22,12 +25,30 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
 }) => {
   const [quantity, setQuantity] = useState(1);
   const { addItem, toggleWishlist, isInWishlist } = useCartStore();
+  const { isAuthenticated } = useAuthStore();
+  const router = useRouter();
 
   if (!product) return null;
 
   const isFavorite = isInWishlist(product.id);
 
+  const handleWishlist = () => {
+    if (!isAuthenticated) {
+      toast.error('Please sign in to save products to your wishlist');
+      onClose();
+      router.push('/login');
+      return;
+    }
+    toggleWishlist(product);
+  };
+
   const handleAddToCart = () => {
+    if (!isAuthenticated) {
+      toast.error('Please sign in to add items to your cart');
+      onClose();
+      router.push('/login');
+      return;
+    }
     addItem(product, quantity);
     onClose();
   };
@@ -42,12 +63,10 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
             alt={product.name || 'FOXAL Incense'}
             fill
             sizes="(max-width: 768px) 100vw, 350px"
-            className="object-cover"
+            style={{ objectFit: 'contain' }}
+            className="object-contain p-3 sm:p-4"
           />
-          <div className="absolute top-3 left-3 flex flex-col gap-1.5">
-            {product.badge && <Badge variant="gold">{product.badge}</Badge>}
-            <Badge variant="sale">{product.discount_percent}% OFF</Badge>
-          </div>
+
         </div>
 
         {/* Product Details */}
@@ -68,11 +87,6 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
               reviewsCount={product.reviews_count}
               size="sm"
             />
-            <span className="text-xs text-[#AFA8A2]">·</span>
-            <span className="text-xs text-[#354E3C] font-semibold flex items-center gap-1">
-              <Clock className="h-3.5 w-3.5" />
-              {product.burn_time}
-            </span>
           </div>
 
           <div className="flex items-baseline gap-2 pt-1 border-t border-[#E3D4BD]/60">
@@ -91,23 +105,6 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
             {product.description}
           </p>
 
-          {/* Scent notes */}
-          <div>
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#7A5230] block mb-1.5">
-              Fragrance Profile:
-            </span>
-            <div className="flex flex-wrap gap-1.5">
-              {product.fragrance_notes.map((note) => (
-                <span
-                  key={note}
-                  className="text-[10px] bg-[#F6EFE4] text-[#7A5230] px-2 py-0.5 rounded-md font-medium border border-[#E3D4BD]"
-                >
-                  {note}
-                </span>
-              ))}
-            </div>
-          </div>
-
           {/* Quantity & CTA */}
           <div className="pt-2 flex items-center gap-3">
             <QuantitySelector
@@ -125,7 +122,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
               Add ₹{product.price * quantity}
             </Button>
             <button
-              onClick={() => toggleWishlist(product)}
+              onClick={handleWishlist}
               className="p-2.5 rounded-xl border border-[#E3D4BD] bg-white text-[#7A5230] hover:text-red-500 hover:bg-[#F6EFE4] transition-colors"
               aria-label="Wishlist"
             >

@@ -35,7 +35,7 @@ interface OrderStore {
   currentAddress: ShippingAddress;
   shippingMethod: 'standard' | 'express';
   paymentMethod: 'cod' | 'upi' | 'card';
-  
+
   // Actions
   setAddress: (addr: Partial<ShippingAddress>) => void;
   setShippingMethod: (method: 'standard' | 'express') => void;
@@ -81,14 +81,14 @@ export const useOrderStore = create<OrderStore>()(
                 reviews_count: 184,
                 in_stock: true,
                 burn_time: '45 - 50 Minutes',
-                fragrance_notes: ['Velvety Musk', 'Sacred Herbs'],
+                fragrance_notes: [],
                 ingredients: ['Temple Flowers', 'Natural Resin'],
                 description: 'Pure charcoal-free kasturi incense sticks.',
                 benefits: ['Calms mind', 'Zero black soot'],
                 is_bestseller: true,
                 is_featured: true,
                 images: [
-                  'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=1000&auto=format&fit=crop',
+                  '/images/products/foxal-kasturi-premium-incense-sticks.jpg',
                 ],
               },
               quantity: 2,
@@ -108,15 +108,15 @@ export const useOrderStore = create<OrderStore>()(
                 rating: 4.9,
                 reviews_count: 176,
                 in_stock: true,
-                burn_time: '35 - 40 Minutes per Cone',
-                fragrance_notes: ['Rich Sandalwood', 'Soft Musk'],
+                burn_time: '',
+                fragrance_notes: [],
                 ingredients: ['Mysore Sandal Bark', 'Temple Flowers'],
                 description: 'Compact, dense and fragrant.',
                 benefits: ['PUJA & hawan', 'Ceramic burner plate included'],
                 is_bestseller: true,
                 is_featured: true,
                 images: [
-                  'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=1000&auto=format&fit=crop',
+                  '/images/products/cones/foxal-sandalwood-natural-incense-cones.jpg',
                 ],
               },
               quantity: 1,

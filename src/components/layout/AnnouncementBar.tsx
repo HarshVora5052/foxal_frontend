@@ -32,7 +32,7 @@ export const AnnouncementBar: React.FC = () => {
   }, [messages.length]);
 
   return (
-    <div className="relative z-30 bg-[#0F0D0B] text-[#FAF7F2] py-2 px-4 text-center border-b border-[#C8922A]/20">
+    <div className="relative z-30 bg-[#0F0D0B] text-[#FAF7F2] py-2 px-3 text-center border-b border-[#C8922A]/20 overflow-hidden w-full max-w-full">
       <div className="max-w-7xl mx-auto flex items-center justify-center min-h-[22px]">
         <AnimatePresence mode="wait">
           <motion.div

@@ -31,12 +31,12 @@ export const Drawer: React.FC<DrawerProps> = ({
     };
 
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflowY = 'hidden';
       window.addEventListener('keydown', handleKeyDown);
     }
 
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflowY = 'unset';
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [isOpen, onClose]);
@@ -79,7 +79,7 @@ export const Drawer: React.FC<DrawerProps> = ({
           <div
             className={`fixed inset-y-0 ${
               position === 'right' ? 'right-0' : 'left-0'
-            } flex max-w-full`}
+            } flex w-full ${maxWidthStyles} pointer-events-none max-w-full`}
           >
             <motion.div
               role="dialog"
@@ -89,13 +89,13 @@ export const Drawer: React.FC<DrawerProps> = ({
               animate="animate"
               exit="exit"
               transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              className={`w-screen ${maxWidthStyles} bg-[#FAF7F2] border-l border-[#C8922A]/20 shadow-2xl flex flex-col`}
+              className="pointer-events-auto w-full h-full bg-[#FAF7F2] border-l border-[#C8922A]/20 shadow-2xl flex flex-col overflow-hidden"
             >
               {/* Header */}
-              <div className="flex items-center justify-between border-b border-[#E3D4BD] px-6 py-5 bg-[#F6EFE4]">
+              <div className="flex items-center justify-between border-b border-[#E3D4BD] px-4 sm:px-6 py-4 sm:py-5 bg-[#F6EFE4] shrink-0">
                 <div>
                   {title && (
-                    <h3 className="font-serif text-2xl font-semibold text-[#0F0D0B]">
+                    <h3 className="font-serif text-xl sm:text-2xl font-semibold text-[#0F0D0B]">
                       {title}
                     </h3>
                   )}
@@ -105,7 +105,7 @@ export const Drawer: React.FC<DrawerProps> = ({
                 </div>
                 <button
                   onClick={onClose}
-                  className="p-2 rounded-full text-[#7A5230] hover:text-[#0F0D0B] hover:bg-[#EADECB] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C8922A]"
+                  className="p-1.5 sm:p-2 rounded-full text-[#7A5230] hover:text-[#0F0D0B] hover:bg-[#EADECB] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C8922A]"
                   aria-label="Close drawer"
                 >
                   <X className="h-5 w-5" />
@@ -113,7 +113,9 @@ export const Drawer: React.FC<DrawerProps> = ({
               </div>
 
               {/* Body */}
-              <div className="flex-1 overflow-y-auto px-6 py-5">{children}</div>
+              <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 sm:px-6 py-4 sm:py-5">
+                {children}
+              </div>
             </motion.div>
           </div>
         </div>

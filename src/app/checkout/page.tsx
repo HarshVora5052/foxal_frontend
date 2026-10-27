@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -33,7 +33,14 @@ export default function CheckoutPage() {
   const { items, getSubtotal, getDiscountAmount, getFinalTotal, clearCart } =
     useCartStore();
   const { currentAddress, setAddress, createOrder } = useOrderStore();
-  const { user } = useAuthStore();
+  const { user, isAuthenticated } = useAuthStore();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      toast.error('Please sign in to complete your purchase');
+      router.push('/login?redirect=/checkout');
+    }
+  }, [isAuthenticated, router]);
 
   const [step, setStep] = useState<CheckoutStep>('address');
 

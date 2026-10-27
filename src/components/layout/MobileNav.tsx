@@ -27,7 +27,7 @@ interface MobileNavProps {
 
 export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
   const { getTotalItems, openCart, wishlist } = useCartStore();
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated, user, openAuthModal } = useAuthStore();
   const totalCart = getTotalItems();
   const wishlistCount = wishlist.length;
 
@@ -96,43 +96,55 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
                 Contact us
               </Link>
 
-              {/* Wishlist */}
-              <Link
-                href="/wishlist"
-                onClick={onClose}
-                className="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-[#0F0D0B] hover:bg-[#F6EFE4] transition-colors"
-              >
-                <span className="flex items-center gap-3">
-                  <Heart className="h-4 w-4 text-[#C8922A]" />
-                  Saved Wishlist
-                </span>
-                {wishlistCount > 0 && (
-                  <span className="text-[11px] bg-[#C8922A] text-white px-2 py-0.5 rounded-full font-semibold">
-                    {wishlistCount}
+              {/* Wishlist: Only when logged in */}
+              {isAuthenticated && (
+                <Link
+                  href="/wishlist"
+                  onClick={onClose}
+                  className="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-[#0F0D0B] hover:bg-[#F6EFE4] transition-colors"
+                >
+                  <span className="flex items-center gap-3">
+                    <Heart className="h-4 w-4 text-[#C8922A]" />
+                    Saved Wishlist
                   </span>
-                )}
-              </Link>
-
-              {/* Account / Log Icon */}
-              <Link
-                href={isAuthenticated ? '/account' : '/login'}
-                onClick={onClose}
-                className="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-[#0F0D0B] hover:bg-[#F6EFE4] transition-colors"
-              >
-                <span className="flex items-center gap-3">
-                  {isAuthenticated ? (
-                    <User className="h-4 w-4 text-[#C8922A]" />
-                  ) : (
-                    <LogIn className="h-4 w-4 text-[#C8922A]" />
+                  {wishlistCount > 0 && (
+                    <span className="text-[11px] bg-[#C8922A] text-white px-2 py-0.5 rounded-full font-semibold">
+                      {wishlistCount}
+                    </span>
                   )}
-                  {isAuthenticated ? (user?.name ? `${user.name} (Account)` : 'My Account') : 'Sign In / Register'}
-                </span>
-                {isAuthenticated && (
+                </Link>
+              )}
+
+              {/* Account / Sign In */}
+              {isAuthenticated ? (
+                <Link
+                  href="/account"
+                  onClick={onClose}
+                  className="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-[#0F0D0B] hover:bg-[#F6EFE4] transition-colors"
+                >
+                  <span className="flex items-center gap-3">
+                    <User className="h-4 w-4 text-[#C8922A]" />
+                    {user?.name ? `${user.name} (Account)` : 'My Account'}
+                  </span>
                   <span className="text-[10px] bg-[#4A6B53] text-white px-2 py-0.5 rounded-full font-semibold">
                     Active
                   </span>
-                )}
-              </Link>
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    openAuthModal('login');
+                  }}
+                  className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-[#0F0D0B] hover:bg-[#F6EFE4] transition-colors text-left"
+                >
+                  <span className="flex items-center gap-3">
+                    <LogIn className="h-4 w-4 text-[#C8922A]" />
+                    Sign In / Register
+                  </span>
+                </button>
+              )}
 
               {/* Cart Drawer Item: Only visible after login */}
               {isAuthenticated && (
@@ -155,30 +167,8 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
               )}
             </div>
 
-            {/* Information & Policies */}
-            <div className="space-y-1 pt-3 border-t border-[#E3D4BD]">
-              <span className="block text-[11px] font-semibold uppercase tracking-wider text-[#AFA8A2] px-3 mb-2">
-                Brand &amp; Support
-              </span>
 
-              <Link
-                href="/about"
-                onClick={onClose}
-                className="flex items-center gap-3 px-3 py-2 text-sm text-[#272320] hover:bg-[#F6EFE4] rounded-xl transition-colors"
-              >
-                <Info className="h-4 w-4 text-[#7A5230]" />
-                About FOXAL Temple Mission
-              </Link>
 
-              <Link
-                href="/shipping"
-                onClick={onClose}
-                className="flex items-center gap-3 px-3 py-2 text-sm text-[#272320] hover:bg-[#F6EFE4] rounded-xl transition-colors"
-              >
-                <Truck className="h-4 w-4 text-[#7A5230]" />
-                Shipping Policy (&gt;₹499 Free)
-              </Link>
-            </div>
           </div>
 
           {/* Contact / Help Footer */}

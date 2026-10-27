@@ -63,7 +63,7 @@ export default function AdminProductsPage() {
   const [formBurnTime, setFormBurnTime] = useState('45 - 50 Minutes');
   const [formDescription, setFormDescription] = useState('');
   const [formImages, setFormImages] = useState<string[]>([
-    'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=1000&auto=format&fit=crop',
+    '/images/products/foxal-sukhad-premium-incense-sticks.jpg',
   ]);
   const [formIsActive, setFormIsActive] = useState(true);
   const [formIsFeatured, setFormIsFeatured] = useState(false);
@@ -97,7 +97,7 @@ export default function AdminProductsPage() {
     setFormBurnTime('45 - 50 Minutes');
     setFormDescription('100% Charcoal-free natural agarbatti made from upcycled temple flowers.');
     setFormImages([
-      'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=1000&auto=format&fit=crop',
+      '/images/products/foxal-sukhad-premium-incense-sticks.jpg',
     ]);
     setFormIsActive(true);
     setFormIsFeatured(false);
@@ -120,7 +120,7 @@ export default function AdminProductsPage() {
     setFormBurnTime(product.burn_time);
     setFormDescription(product.description);
     setFormImages(product.images.length > 0 ? product.images : [
-      'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=1000&auto=format&fit=crop'
+      '/images/products/foxal-sukhad-premium-incense-sticks.jpg'
     ]);
     setTargetImageCount(Math.min(6, Math.max(1, product.images.length || 1)));
     setFormIsActive(product.is_active ?? true);
@@ -195,7 +195,7 @@ export default function AdminProductsPage() {
         is_featured: formIsFeatured,
         is_active: formIsActive,
         images: activeImages.length > 0 ? activeImages : [
-          'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=1000&auto=format&fit=crop',
+          '/images/products/foxal-sukhad-premium-incense-sticks.jpg',
         ],
       });
     }
@@ -422,7 +422,7 @@ export default function AdminProductsPage() {
               {paginatedList.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="p-12 text-center text-[#7A5230]">
-                    No fragrances match your search criteria.
+                    No flavor match your search criteria.
                   </td>
                 </tr>
               ) : (
@@ -431,9 +431,8 @@ export default function AdminProductsPage() {
                   return (
                     <tr
                       key={product.id}
-                      className={`hover:bg-[#FAF7F2]/60 transition-colors ${
-                        isChecked ? 'bg-[#FDF9F2]' : ''
-                      }`}
+                      className={`hover:bg-[#FAF7F2]/60 transition-colors ${isChecked ? 'bg-[#FDF9F2]' : ''
+                        }`}
                     >
                       <td className="p-4">
                         <input
@@ -492,11 +491,10 @@ export default function AdminProductsPage() {
                       {/* Stock */}
                       <td className="p-4">
                         <span
-                          className={`font-semibold ${
-                            (product.stock_quantity ?? 100) < 50
+                          className={`font-semibold ${(product.stock_quantity ?? 100) < 50
                               ? 'text-amber-600'
                               : 'text-[#354E3C]'
-                          }`}
+                            }`}
                         >
                           {product.stock_quantity ?? 120} units
                         </span>
@@ -506,11 +504,10 @@ export default function AdminProductsPage() {
                       <td className="p-4">
                         <button
                           onClick={() => toggleProductActive(product.id)}
-                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold transition-all ${
-                            product.is_active !== false
+                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold transition-all ${product.is_active !== false
                               ? 'bg-[#EBF2ED] text-[#4A6B53] border border-[#C7D9CD]'
                               : 'bg-zinc-100 text-zinc-500 border border-zinc-200'
-                          }`}
+                            }`}
                         >
                           {product.is_active !== false ? 'Live Active' : 'Draft'}
                         </button>

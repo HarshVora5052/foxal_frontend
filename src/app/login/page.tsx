@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -19,7 +19,7 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get('redirect') || '/account';
@@ -53,8 +53,8 @@ export default function LoginPage() {
 
   return (
     <AuthLayout
-      title="Welcome Back"
-      subtitle="Sign in to track orders, manage saved addresses, and access your sacred wishlist."
+      title="Sign In"
+      subtitle="Sign in to your account to view wishlist, cart and orders."
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {formError && (
@@ -119,7 +119,7 @@ export default function LoginPage() {
           rightIcon={<ArrowRight className="h-4 w-4" />}
           className="mt-6"
         >
-          Sign In to Account
+          Sign In
         </Button>
 
         <div className="pt-4 border-t border-[#E3D4BD] text-center text-xs text-[#7A5230]">
@@ -130,10 +130,24 @@ export default function LoginPage() {
             }`}
             className="font-bold text-[#C8922A] hover:underline"
           >
-            Create Sacred Account
+            Create Account
           </Link>
         </div>
       </form>
     </AuthLayout>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#FAF7F2] flex items-center justify-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#C8922A] border-t-transparent" />
+        </div>
+      }
+    >
+      <LoginForm />
+    </Suspense>
   );
 }

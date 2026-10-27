@@ -18,7 +18,7 @@ export const BestSellers: React.FC<BestSellersProps> = ({ onQuickView }) => {
   });
 
   return (
-    <section id="bestsellers" className="py-16 sm:py-24 bg-[#F6EFE4]/60 border-y border-[#E3D4BD]">
+    <section id="bestsellers" className="py-16 sm:py-24 bg-[#F6EFE4]/60 border-y border-[#E3D4BD] overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
@@ -36,51 +36,21 @@ export const BestSellers: React.FC<BestSellersProps> = ({ onQuickView }) => {
             </p>
           </div>
 
-          {/* Filter Tabs */}
-          <div className="inline-flex rounded-xl bg-[#FAF7F2] p-1.5 border border-[#E3D4BD] self-start md:self-auto shadow-sm">
-            <button
-              onClick={() => setFilter('all')}
-              className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all ${
-                filter === 'all'
-                  ? 'bg-[#0F0D0B] text-[#FAF7F2] shadow-sm'
-                  : 'text-[#7A5230] hover:text-[#0F0D0B]'
-              }`}
-            >
-              All Favorites
-            </button>
-            <button
-              onClick={() => setFilter('sticks')}
-              className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
-                filter === 'sticks'
-                  ? 'bg-[#0F0D0B] text-[#FAF7F2] shadow-sm'
-                  : 'text-[#7A5230] hover:text-[#0F0D0B]'
-              }`}
-            >
-              <Flame className="h-3.5 w-3.5" />
-              Sticks (250g)
-            </button>
-            <button
-              onClick={() => setFilter('cones')}
-              className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
-                filter === 'cones'
-                  ? 'bg-[#0F0D0B] text-[#FAF7F2] shadow-sm'
-                  : 'text-[#7A5230] hover:text-[#0F0D0B]'
-              }`}
-            >
-              <Sparkles className="h-3.5 w-3.5" />
-              Cones (60 pcs)
-            </button>
-          </div>
+
         </div>
 
-        {/* Product Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {/* Product Grid: Horizontal Scroll on Mobile, Grid on Tablet/Desktop */}
+        <div className="flex sm:grid overflow-x-auto sm:overflow-visible pb-4 sm:pb-0 gap-4 sm:gap-6 snap-x snap-mandatory -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           {filteredProducts.map((product) => (
-            <ProductCard
+            <div
               key={product.id}
-              product={product}
-              onQuickView={onQuickView}
-            />
+              className="w-[78vw] max-w-[280px] sm:w-auto sm:max-w-none shrink-0 snap-start flex flex-col"
+            >
+              <ProductCard
+                product={product}
+                onQuickView={onQuickView}
+              />
+            </div>
           ))}
         </div>
       </div>

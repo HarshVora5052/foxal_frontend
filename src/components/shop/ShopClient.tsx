@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import Image from 'next/image';
 import { Product } from '@/lib/mock';
 import { ProductGridCard } from '@/components/shop/ProductGridCard';
 import { FilterSidebar, FilterState } from '@/components/shop/FilterSidebar';
@@ -16,7 +17,7 @@ interface ShopClientProps {
   categorySubtitle?: string;
 }
 
-const ITEMS_PER_PAGE = 8;
+const ITEMS_PER_PAGE = 24;
 
 export const ShopClient: React.FC<ShopClientProps> = ({
   initialProducts = [],
@@ -52,13 +53,21 @@ export const ShopClient: React.FC<ShopClientProps> = ({
     if (filters.fragrance) {
       const f = filters.fragrance.toLowerCase();
       result = result.filter((p) =>
-        p.fragrance_notes.some((note) => note.toLowerCase().includes(f))
+        (p.fragrance_notes || []).some((note) => note.toLowerCase().includes(f))
       );
+    }
+
+    // Price
+    if (filters.minPrice > 0) {
+      result = result.filter((p) => Number(p.price) >= filters.minPrice);
+    }
+    if (filters.maxPrice < 300) {
+      result = result.filter((p) => Number(p.price) <= filters.maxPrice);
     }
 
     // Rating
     if (filters.minRating > 0) {
-      result = result.filter((p) => p.rating >= filters.minRating);
+      result = result.filter((p) => Number(p.rating) >= filters.minRating);
     }
 
     // In Stock
@@ -137,8 +146,8 @@ export const ShopClient: React.FC<ShopClientProps> = ({
           </div>
 
           {/* Special Festive Banner Tag */}
-          <div className="bg-[#FAF7F2] border border-[#C8922A]/40 rounded-2xl p-3 px-4 flex items-center gap-3 shrink-0 shadow-sm">
-            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#0F0D0B] text-[#DFB15B]">
+          <div className="bg-[#FAF7F2] border border-[#C8922A]/40 rounded-2xl p-3 px-4 flex items-center gap-3 w-full sm:w-auto shadow-sm">
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#0F0D0B] text-[#DFB15B] shrink-0">
               <Sparkles className="h-4 w-4" />
             </span>
             <div>
@@ -151,6 +160,24 @@ export const ShopClient: React.FC<ShopClientProps> = ({
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Category-Specific Hero Banner (100% visible on mobile & desktop) */}
+      <div className="relative w-full aspect-[1024/373] rounded-2xl sm:rounded-3xl overflow-hidden border border-[#E3D4BD] mb-8 shadow-sm bg-[#0F0D0B]">
+        <Image
+          src={
+            filters.category === 'sticks'
+              ? '/images/banners/foxal-incense-sticks-banner.png'
+              : filters.category === 'cones'
+                ? '/images/banners/foxal-incense-cones-banner.png'
+                : '/images/banners/foxal-all-products-banner.png'
+          }
+          alt={categoryTitle}
+          fill
+          priority
+          sizes="(max-width: 640px) 100vw, (max-width: 1200px) 95vw, 1280px"
+          className="w-full h-full object-contain"
+        />
       </div>
 
       {/* Main Layout: Desktop Sidebar (Left) + Product Grid (Right) */}
@@ -186,30 +213,9 @@ export const ShopClient: React.FC<ShopClientProps> = ({
                 )}
               </button>
 
-              <span className="text-xs text-[#7A5230] font-medium hidden sm:inline">
-                Showing{' '}
-                <strong className="text-[#0F0D0B]">{filteredProducts.length}</strong>{' '}
-                sacred items
-              </span>
+
             </div>
 
-            {/* Sort Select */}
-            <div className="flex items-center gap-2 self-end sm:self-auto">
-              <span className="text-xs text-[#7A5230] font-medium">Sort by:</span>
-              <select
-                value={filters.sort}
-                onChange={(e) =>
-                  setFilters({ ...filters, sort: e.target.value })
-                }
-                className="rounded-xl border border-[#E3D4BD] bg-white px-3 py-1.5 text-xs font-semibold text-[#0F0D0B] focus:outline-none focus:ring-2 focus:ring-[#C8922A]"
-              >
-                <option value="popular">Most Popular</option>
-                <option value="rating">Highest Rated</option>
-                <option value="price_asc">Price: Low to High</option>
-                <option value="price_desc">Price: High to Low</option>
-                <option value="newest">New Arrivals</option>
-              </select>
-            </div>
           </div>
 
           {/* Active Filter Pills */}
@@ -218,7 +224,7 @@ export const ShopClient: React.FC<ShopClientProps> = ({
               <span className="text-xs text-[#7A5230]">Active filters:</span>
               {filters.category !== 'all' && (
                 <span className="inline-flex items-center gap-1 text-xs bg-[#F6EFE4] text-[#0F0D0B] px-2.5 py-1 rounded-full border border-[#E3D4BD]">
-                  Category: {filters.category}
+                  Product: {filters.category === 'sticks' ? 'Incense Sticks (250g)' : filters.category === 'cones' ? 'Incense Cones (60 pcs)' : filters.category}
                   <button
                     onClick={() =>
                       setFilters({ ...filters, category: 'all' })
@@ -230,7 +236,7 @@ export const ShopClient: React.FC<ShopClientProps> = ({
               )}
               {filters.fragrance && (
                 <span className="inline-flex items-center gap-1 text-xs bg-[#F6EFE4] text-[#0F0D0B] px-2.5 py-1 rounded-full border border-[#E3D4BD]">
-                  Aroma: {filters.fragrance}
+                  Flavour: {filters.fragrance}
                   <button
                     onClick={() => setFilters({ ...filters, fragrance: '' })}
                   >
@@ -274,7 +280,7 @@ export const ShopClient: React.FC<ShopClientProps> = ({
             <div className="py-20 text-center rounded-3xl border border-[#E3D4BD] bg-white p-8">
               <Sparkles className="mx-auto h-12 w-12 text-[#C8922A]/60 mb-3" />
               <h3 className="font-serif text-2xl font-bold text-[#0F0D0B]">
-                No fragrances matched your selection
+                No flavor matched your selection
               </h3>
               <p className="mt-2 text-xs sm:text-sm text-[#7A5230] max-w-sm mx-auto">
                 Try loosening your filters or explore our all-time favorite bestsellers.
@@ -315,11 +321,10 @@ export const ShopClient: React.FC<ShopClientProps> = ({
                   <button
                     key={pageNum}
                     onClick={() => setCurrentPage(pageNum)}
-                    className={`h-9 w-9 rounded-xl text-xs font-semibold transition-all ${
-                      currentPage === pageNum
-                        ? 'bg-[#0F0D0B] text-white shadow-sm'
-                        : 'border border-[#E3D4BD] bg-white text-[#7A5230] hover:bg-[#F6EFE4]'
-                    }`}
+                    className={`h-9 w-9 rounded-xl text-xs font-semibold transition-all ${currentPage === pageNum
+                      ? 'bg-[#0F0D0B] text-white shadow-sm'
+                      : 'border border-[#E3D4BD] bg-white text-[#7A5230] hover:bg-[#F6EFE4]'
+                      }`}
                   >
                     {pageNum}
                   </button>
@@ -353,10 +358,10 @@ export const ShopClient: React.FC<ShopClientProps> = ({
       />
 
       {/* Quick View Modal */}
-      <QuickViewModal
+      {/* <QuickViewModal
         product={quickViewProduct}
         onClose={() => setQuickViewProduct(null)}
-      />
+      /> */}
     </div>
   );
 };

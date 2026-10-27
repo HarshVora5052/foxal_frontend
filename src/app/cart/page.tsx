@@ -5,6 +5,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/store/useCartStore';
+import { useAuthStore } from '@/store/useAuthStore';
+import { toast } from 'sonner';
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -25,6 +27,7 @@ import {
 
 export default function CartPage() {
   const router = useRouter();
+  const { isAuthenticated } = useAuthStore();
   const [couponInput, setCouponInput] = useState('');
 
   const {
@@ -308,7 +311,14 @@ export default function CartPage() {
                   variant="primary"
                   size="lg"
                   fullWidth
-                  onClick={() => router.push('/checkout')}
+                  onClick={() => {
+                    if (!isAuthenticated) {
+                      toast.error('Please sign in to proceed with your purchase');
+                      useAuthStore.getState().openAuthModal('login');
+                      return;
+                    }
+                    router.push('/checkout');
+                  }}
                   rightIcon={<ArrowRight className="h-4 w-4" />}
                   className="mt-4 font-semibold tracking-wide"
                 >

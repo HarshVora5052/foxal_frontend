@@ -27,28 +27,28 @@ const CATEGORY_MAP: Record<
 > = {
   sticks: {
     internalCategory: 'sticks',
-    title: 'Incense Sticks (250g Value Pack)',
+    title: 'Incense Sticks',
     subtitle: 'Hand-rolled ~135 sticks per pack. 45-50 min burn time. Kasturi, Woods, Oudh, Sukhad, Mogra, Gugal.',
     metaTitle: 'Natural Incense Sticks (250g) | 100% Charcoal-Free | FOXAL',
     metaDesc: 'Pure Ayurvedic incense sticks made with sacred temple flowers and natural resins. Long 45+ minute burn.',
   },
   'incense-sticks': {
     internalCategory: 'sticks',
-    title: 'Incense Sticks (250g Value Pack)',
+    title: 'Incense Sticks',
     subtitle: 'Hand-rolled ~135 sticks per pack. 45-50 min burn time. Kasturi, Woods, Oudh, Sukhad, Mogra, Gugal.',
     metaTitle: 'Natural Incense Sticks (250g) | 100% Charcoal-Free | FOXAL',
     metaDesc: 'Pure Ayurvedic incense sticks made with sacred temple flowers and natural resins. Long 45+ minute burn.',
   },
   cones: {
     internalCategory: 'cones',
-    title: 'Incense Cones (60 Cones / Box)',
+    title: 'Incense Cones',
     subtitle: 'Pure dhoop cones with complimentary ceramic stand. Sandalwood, Lavender, Rose, Jasmine.',
     metaTitle: 'Organic Incense Cones (60 pcs) with Ceramic Stand | FOXAL',
     metaDesc: 'Handcrafted dhoop cones made with pure flower powder. Dense aromatic smoke for home meditation & puja.',
   },
   'incense-cones': {
     internalCategory: 'cones',
-    title: 'Incense Cones (60 Cones / Box)',
+    title: 'Incense Cones',
     subtitle: 'Pure dhoop cones with complimentary ceramic stand. Sandalwood, Lavender, Rose, Jasmine.',
     metaTitle: 'Organic Incense Cones (60 pcs) with Ceramic Stand | FOXAL',
     metaDesc: 'Handcrafted dhoop cones made with pure flower powder. Dense aromatic smoke for home meditation & puja.',

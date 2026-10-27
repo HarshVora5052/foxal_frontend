@@ -219,7 +219,7 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
-        {/* Right 4 Cols: Top Selling Fragrances */}
+        {/* Right 4 Cols: Top Selling flavor */}
         <div className="lg:col-span-4 bg-white p-6 rounded-3xl border border-[#E3D4BD] shadow-sm space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-[#E3D4BD]">
             <h3 className="font-serif text-lg font-bold text-[#0F0D0B]">
@@ -297,13 +297,12 @@ export default function AdminDashboardPage() {
                     <td className="py-3 font-bold text-[#0F0D0B]">₹{o.total}</td>
                     <td className="py-3">
                       <span
-                        className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${
-                          o.status === 'Cancelled'
+                        className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${o.status === 'Cancelled'
                             ? 'bg-red-100 text-red-700'
                             : o.status === 'Dispatched'
-                            ? 'bg-blue-100 text-blue-700'
-                            : 'bg-emerald-100 text-emerald-800'
-                        }`}
+                              ? 'bg-blue-100 text-blue-700'
+                              : 'bg-emerald-100 text-emerald-800'
+                          }`}
                       >
                         {o.status}
                       </span>
@@ -327,7 +326,7 @@ export default function AdminDashboardPage() {
           <div className="space-y-3">
             {lowStockProducts.length === 0 ? (
               <p className="text-xs text-[#4A6B53] font-medium bg-[#EBF2ED] p-3 rounded-2xl border border-[#C7D9CD]">
-                ✨ All 10 natural fragrances are fully stocked above optimal threshold (100+ units).
+                ✨ All 10 natural flavor are fully stocked above optimal threshold (100+ units).
               </p>
             ) : (
               lowStockProducts.map((p) => (

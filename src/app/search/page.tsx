@@ -66,9 +66,8 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
           <p className="mt-2 text-xs sm:text-sm text-[#7A5230]">
             {query
-              ? `Found ${products.length} pure charcoal-free ${
-                  products.length === 1 ? 'fragrance' : 'fragrances'
-                }`
+              ? `Found ${products.length} pure charcoal-free ${products.length === 1 ? 'fragrance' : 'fragrances'
+              }`
               : 'Enter a fragrance note, collection name, or ingredient above'}
           </p>
         </div>
@@ -78,7 +77,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           <div className="py-20 text-center rounded-3xl border border-[#E3D4BD] bg-white p-8">
             <Sparkles className="mx-auto h-12 w-12 text-[#C8922A]/60 mb-3" />
             <h3 className="font-serif text-2xl font-bold text-[#0F0D0B]">
-              No fragrances matched &ldquo;{query}&rdquo;
+              No flavor matched &ldquo;{query}&rdquo;
             </h3>
             <p className="mt-2 text-xs sm:text-sm text-[#7A5230] max-w-sm mx-auto">
               Try searching for popular notes like Oudh, Sandalwood, Kasturi, or Rose.

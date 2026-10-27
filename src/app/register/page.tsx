@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -27,7 +27,7 @@ const registerSchema = z
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get('redirect') || '/account';
@@ -66,8 +66,8 @@ export default function RegisterPage() {
 
   return (
     <AuthLayout
-      title="Join the Sacred Family"
-      subtitle="Create an account to enjoy express checkout, member rituals, and order tracking."
+      title="Create Account"
+      subtitle="Register with your details to access your orders and wishlist."
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {formError && (
@@ -153,5 +153,19 @@ export default function RegisterPage() {
         </div>
       </form>
     </AuthLayout>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#FAF7F2] flex items-center justify-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#C8922A] border-t-transparent" />
+        </div>
+      }
+    >
+      <RegisterForm />
+    </Suspense>
   );
 }

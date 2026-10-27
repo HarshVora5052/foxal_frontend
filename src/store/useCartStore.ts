@@ -5,6 +5,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { Product } from '@/lib/mock';
 import api from '@/lib/api';
 import { toast } from 'sonner';
+import { useAuthStore } from './useAuthStore';
 
 export interface CartItem {
   product: Product;
@@ -66,6 +67,13 @@ export const useCartStore = create<CartStore>()(
       couponDiscount: 0,
 
       addItem: (product: Product, quantity = 1) => {
+        const isAuth = useAuthStore.getState().isAuthenticated;
+        if (!isAuth) {
+          toast.error('Please sign in to add items to your cart');
+          useAuthStore.getState().openAuthModal('login');
+          return;
+        }
+
         set((state) => {
           const existingIndex = state.items.findIndex(
             (item) => item.product.id === product.id
@@ -147,6 +155,13 @@ export const useCartStore = create<CartStore>()(
       setQuickViewProduct: (product) => set({ quickViewProduct: product }),
 
       toggleWishlist: (product: Product) => {
+        const isAuth = useAuthStore.getState().isAuthenticated;
+        if (!isAuth) {
+          toast.error('Please sign in to save products to your wishlist');
+          useAuthStore.getState().openAuthModal('login');
+          return;
+        }
+
         set((state) => {
           const exists = state.wishlist.includes(product.id);
           if (exists) {

@@ -9,7 +9,10 @@ import { Badge } from '@/components/ui/Badge';
 import { Rating } from '@/components/ui/Rating';
 import { Button } from '@/components/ui/Button';
 import { useCartStore } from '@/store/useCartStore';
-import { Heart, ShoppingBag, Eye, Clock, Sparkles } from 'lucide-react';
+import { useAuthStore } from '@/store/useAuthStore';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import { Heart, ShoppingBag, Sparkles } from 'lucide-react';
 
 export interface ProductGridCardProps {
   product: Product;
@@ -22,7 +25,20 @@ export const ProductGridCard: React.FC<ProductGridCardProps> = ({
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const { addItem, toggleWishlist, isInWishlist } = useCartStore();
+  const { isAuthenticated, openAuthModal } = useAuthStore();
+  const router = useRouter();
   const isFavorite = isInWishlist(product.id);
+
+  const handleWishlistClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isAuthenticated) {
+      toast.error('Please sign in to save products to your wishlist');
+      openAuthModal('login');
+      return;
+    }
+    toggleWishlist(product);
+  };
 
   const hasSecondImage = product.images.length > 1;
   const displayImage =
@@ -46,39 +62,23 @@ export const ProductGridCard: React.FC<ProductGridCardProps> = ({
           alt={product.name}
           fill
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-          className="object-cover transition-all duration-700 ease-out group-hover:scale-105"
+          style={{ objectFit: 'contain' }}
+          className="object-contain p-2.5 sm:p-3 transition-all duration-700 ease-out group-hover:scale-105"
         />
 
-        {/* Badges: Sale %, New, Sold Out, Bestseller */}
-        <div className="absolute top-2.5 left-2.5 flex flex-col gap-1 z-10">
-          {!product.in_stock ? (
+        {/* Badges: Sold Out only */}
+        {!product.in_stock && (
+          <div className="absolute top-2.5 left-2.5 z-10 pointer-events-none">
             <Badge variant="charcoal" size="sm">
               Sold Out
             </Badge>
-          ) : (
-            <>
-              {product.badge && (
-                <Badge variant="gold" size="sm">
-                  {product.badge}
-                </Badge>
-              )}
-              {product.discount_percent > 0 && (
-                <Badge variant="sale" size="sm">
-                  {product.discount_percent}% OFF
-                </Badge>
-              )}
-            </>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Wishlist Heart */}
         <button
           type="button"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            toggleWishlist(product);
-          }}
+          onClick={handleWishlistClick}
           aria-label={isFavorite ? 'Remove from wishlist' : 'Add to wishlist'}
           className="absolute top-2.5 right-2.5 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm text-[#0F0D0B] shadow-sm hover:scale-110 active:scale-95 transition-all"
         >
@@ -91,39 +91,16 @@ export const ProductGridCard: React.FC<ProductGridCardProps> = ({
           />
         </button>
 
-        {/* Quick View Button overlay */}
-        {onQuickView && (
-          <div className="absolute inset-x-0 bottom-2.5 px-2.5 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden sm:block">
-            <Button
-              type="button"
-              variant="charcoal"
-              size="sm"
-              fullWidth
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                onQuickView(product);
-              }}
-              leftIcon={<Eye className="h-3 w-3 text-[#DFB15B]" />}
-              className="text-[11px] py-1.5 bg-[#0F0D0B]/90 backdrop-blur-md"
-            >
-              Quick View
-            </Button>
-          </div>
-        )}
+
       </Link>
 
       {/* Content */}
       <div className="flex flex-1 flex-col p-3 sm:p-4 justify-between">
         <div>
-          {/* Category & Burn Time */}
-          <div className="flex items-center justify-between text-[10px] text-[#7A5230] mb-1">
+          {/* Category */}
+          <div className="text-[10px] text-[#7A5230] mb-1">
             <span className="font-semibold uppercase tracking-wider text-[#C8922A] truncate max-w-[100px]">
-              {product.category_name}
-            </span>
-            <span className="flex items-center gap-0.5 bg-[#F6EFE4] px-1.5 py-0.5 rounded-full border border-[#E3D4BD]">
-              <Clock className="h-2.5 w-2.5" />
-              {product.burn_time.split(' ')[0]}
+              {product.category_name || (product.category === 'cones' ? 'Incense Cones' : 'Incense Sticks')}
             </span>
           </div>
 
@@ -134,23 +111,11 @@ export const ProductGridCard: React.FC<ProductGridCardProps> = ({
             </h4>
           </Link>
 
-          {/* Fragrance Notes */}
-          <div className="mt-1.5 flex flex-wrap gap-1">
-            {product.fragrance_notes.slice(0, 2).map((note) => (
-              <span
-                key={note}
-                className="text-[9px] bg-[#F6EFE4] text-[#7A5230] px-1.5 py-0.5 rounded font-medium border border-[#E3D4BD]/60"
-              >
-                {note}
-              </span>
-            ))}
-          </div>
-
           {/* Rating */}
           <div className="mt-2">
             <Rating
-              score={product.rating}
-              reviewsCount={product.reviews_count}
+              score={Number(product.rating) || 4.9}
+              reviewsCount={Number(product.reviews_count) || 120}
               size="sm"
             />
           </div>
@@ -161,14 +126,14 @@ export const ProductGridCard: React.FC<ProductGridCardProps> = ({
           <div className="flex items-baseline justify-between mb-2">
             <div className="flex items-baseline gap-1.5">
               <span className="text-base sm:text-lg font-bold text-[#0F0D0B]">
-                ₹{product.price}
+                ₹{Number(product.price) || 149}
               </span>
               <span className="text-[11px] text-[#AFA8A2] line-through">
-                ₹{product.mrp}
+                ₹{Number(product.mrp) || 199}
               </span>
             </div>
             <span className="text-[10px] font-semibold text-[#354E3C] bg-[#EBF2ED] px-1.5 py-0.5 rounded border border-[#C7D9CD]">
-              -₹{product.mrp - product.price}
+              -₹{Math.max(0, (Number(product.mrp) || 199) - (Number(product.price) || 149))}
             </span>
           </div>
 
@@ -181,6 +146,11 @@ export const ProductGridCard: React.FC<ProductGridCardProps> = ({
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
+              if (!isAuthenticated) {
+                toast.error('Please sign in to add items to your cart');
+                openAuthModal('login');
+                return;
+              }
               if (product.in_stock) addItem(product, 1);
             }}
             leftIcon={<ShoppingBag className="h-3.5 w-3.5" />}

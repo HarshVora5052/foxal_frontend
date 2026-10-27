@@ -26,7 +26,7 @@ export const FilterDrawer: React.FC<FilterDrawerProps> = ({
     <Drawer
       isOpen={isOpen}
       onClose={onClose}
-      title="Filter Collection"
+      title="Filter Products"
       subtitle={`${totalResults} pure products available`}
       position="left"
       maxWidth="sm"

@@ -12,6 +12,15 @@
     --color-sage: #4A6B53;
   }
 
+  html,
+  body {
+    overflow-x: hidden !important;
+    max-width: 100% !important;
+    width: 100%;
+    position: relative;
+    -webkit-overflow-scrolling: touch;
+  }
+
   html {
     scroll-behavior: smooth;
     color-scheme: light;
@@ -23,7 +32,6 @@
     font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
   }
 
   h1, h2, h3, h4, .font-heading {

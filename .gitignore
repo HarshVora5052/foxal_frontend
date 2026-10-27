@@ -35,6 +35,10 @@ yarn-error.log*
 .env*.local
 *.env
 
+# images & media folders
+/public/images/
+/public/uploads/
+
 # vercel
 .vercel
 

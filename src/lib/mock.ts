@@ -78,7 +78,7 @@ export const PRODUCTS: Product[] = [
     reviews_count: 246,
     in_stock: true,
     burn_time: '45 - 50 Minutes',
-    fragrance_notes: ['Sweet Mysore Sandal', 'Honeyed Amber', 'Sacred Tulsi', 'Gentle Temple Flowers'],
+    fragrance_notes: [],
     ingredients: ['Mysore Sandalwood Dust', 'Sacred Temple Blossoms', 'Desi Gir Cow Dung Ash', 'Natural Herbal Gums'],
     description:
       'Tradition in Every Fragrance. FOXAL Sukhad Premium Incense Sticks are 100% charcoal-free, hand-rolled with consecrated temple flowers and genuine sandalwood. Packed in our signature transparent cylindrical container with a regal gold cap.',
@@ -87,7 +87,7 @@ export const PRODUCTS: Product[] = [
     is_bestseller: true,
     is_featured: true,
     images: [
-      '/images/products/sticks/foxal-sukhad-premium-incense-sticks.jpg',
+      '/images/products/foxal-sukhad-premium-incense-sticks.jpg',
     ],
   },
   {
@@ -105,7 +105,7 @@ export const PRODUCTS: Product[] = [
     reviews_count: 219,
     in_stock: true,
     burn_time: '45 - 50 Minutes',
-    fragrance_notes: ['Aged Agarwood', 'Warm Leather', 'Smoky Cedar', 'Sweet Balsam'],
+    fragrance_notes: [],
     ingredients: ['Pure Oudh Essential Extracts', 'Crushed Temple Petals', 'Jigat Powder', 'Organic Resins'],
     description:
       'Known as the "Liquid Gold" of perfumery, Oudh brings a regal, deeply meditative ambience into your home. Each charcoal-free stick releases slow, aromatic wisps that linger long after extinguishing.',
@@ -114,8 +114,7 @@ export const PRODUCTS: Product[] = [
     is_bestseller: true,
     is_featured: true,
     images: [
-      'https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?q=80&w=1000&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?q=80&w=1000&auto=format&fit=crop',
+      '/images/products/foxal-oudh-premium-incense-sticks.jpg',
     ],
   },
   {
@@ -133,7 +132,7 @@ export const PRODUCTS: Product[] = [
     reviews_count: 142,
     in_stock: true,
     burn_time: '45 - 50 Minutes',
-    fragrance_notes: ['Himalayan Cedar', 'Pine Needle', 'Earthy Khus (Vetiver)', 'Forest Bark'],
+    fragrance_notes: [],
     ingredients: ['Ground Forest Bark', 'Temple Marigold Petals', 'Vetiver Roots', 'Ayurvedic Gums'],
     description:
       'Step into a mist-laden sacred forest. Ancient Woods harmonizes Himalayan cedar with earthy vetiver for a tranquil, grounding experience. Naturally purified air without burning synthetic chemicals.',
@@ -142,8 +141,7 @@ export const PRODUCTS: Product[] = [
     is_bestseller: false,
     is_featured: true,
     images: [
-      'https://images.unsplash.com/photo-1506869640319-fe1a24fd76dc?q=80&w=1000&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?q=80&w=1000&auto=format&fit=crop',
+      '/images/products/foxal-woods-premium-incense-sticks.jpg',
     ],
   },
   {
@@ -161,7 +159,7 @@ export const PRODUCTS: Product[] = [
     reviews_count: 198,
     in_stock: true,
     burn_time: '45 - 50 Minutes',
-    fragrance_notes: ['Sweet Mysore Sandal', 'Honeyed Wood', 'Sacred Tulsi', 'Gentle Camphor'],
+    fragrance_notes: [],
     ingredients: ['Mysore Sandalwood Dust', 'Temple Rose Petals', 'Sacred Herbs', 'Natural Gums'],
     description:
       'Sukhad embodies timeless Indian devotion. Crafted with sustainably sourced sandalwood powder and consecrated temple blooms. A soft, soothing fragrance that creates an aura of sacred peace in every corner.',
@@ -170,8 +168,7 @@ export const PRODUCTS: Product[] = [
     is_bestseller: true,
     is_featured: true,
     images: [
-      'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=1000&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?q=80&w=1000&auto=format&fit=crop',
+      '/images/products/foxal-sukhad-premium-incense-sticks.jpg',
     ],
   },
   {
@@ -189,7 +186,7 @@ export const PRODUCTS: Product[] = [
     reviews_count: 167,
     in_stock: true,
     burn_time: '45 - 50 Minutes',
-    fragrance_notes: ['Fresh Mogra Petals', 'Green Foliage', 'Honey Dew', 'Subtle Amber'],
+    fragrance_notes: [],
     ingredients: ['Fresh Jasmine Extracts', 'Recycled Temple Floral Base', 'Natural Tree Resin', 'Essential Extracts'],
     description:
       'The uplifting essence of pristine Indian Mogra flowers. Captures the fresh sweetness of morning blossoms, uplifting heavy moods and filling living spaces with welcoming, natural floral energy.',
@@ -198,8 +195,7 @@ export const PRODUCTS: Product[] = [
     is_bestseller: false,
     is_featured: false,
     images: [
-      'https://images.unsplash.com/photo-1596704017254-9b121068fb31?q=80&w=1000&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1602928321679-560bb453f190?q=80&w=1000&auto=format&fit=crop',
+      '/images/products/foxal-mogra-premium-incense-sticks.jpg',
     ],
   },
   {
@@ -217,7 +213,7 @@ export const PRODUCTS: Product[] = [
     reviews_count: 245,
     in_stock: true,
     burn_time: '45 - 50 Minutes',
-    fragrance_notes: ['Warm Balsamic Gugal', 'Dry Frankincense', 'Smoky Herbs', 'Camphor Essence'],
+    fragrance_notes: [],
     ingredients: ['Pure Indian Gugal Resin', 'Desi Gir Cow Dung Ash', 'Neem Leaves', 'Herbal Binders'],
     description:
       'Used for millennia in Vedic Hawan rituals, Gugal resin is revered for its antimicrobial and air-cleansing properties. Made strictly with pure tree sap and Gir cow dung powder, without coal or petroleum accelerants.',
@@ -226,8 +222,7 @@ export const PRODUCTS: Product[] = [
     is_bestseller: true,
     is_featured: true,
     images: [
-      'https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?q=80&w=1000&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1506869640319-fe1a24fd76dc?q=80&w=1000&auto=format&fit=crop',
+      '/images/products/foxal-gugal-premium-incense-sticks.jpg',
     ],
   },
 
@@ -247,7 +242,7 @@ export const PRODUCTS: Product[] = [
     reviews_count: 176,
     in_stock: true,
     burn_time: '35 - 40 Minutes per Cone',
-    fragrance_notes: ['Rich Sandalwood', 'Creamy Vanilla Wood', 'Soft Musk', 'Warm Honey'],
+    fragrance_notes: [],
     ingredients: ['Mysore Sandal Bark', 'Temple Flower Composite', 'Gir Cow Ghee', 'Vegetable Gums'],
     description:
       'Compact, dense and fragrant. FOXAL Sandalwood Natural Incense Cones release concentrated plumes of sacred chandan aroma. Packed in a luxury gift box with a ceramic holder included.',
@@ -256,7 +251,10 @@ export const PRODUCTS: Product[] = [
     is_bestseller: true,
     is_featured: true,
     images: [
-      '/images/products/cones/foxal-sandalwood-natural-incense-cones.jpg',
+      '/uploads/products/foxal-sandalwood-natural-incense-cones-thumb.jpg',
+      '/uploads/products/foxal-sandalwood-natural-incense-cones-2.jpg',
+      '/uploads/products/foxal-sandalwood-natural-incense-cones-3.jpg',
+      '/uploads/products/foxal-sandalwood-natural-incense-cones-4.jpg',
     ],
   },
   {
@@ -274,7 +272,7 @@ export const PRODUCTS: Product[] = [
     reviews_count: 134,
     in_stock: true,
     burn_time: '35 - 40 Minutes per Cone',
-    fragrance_notes: ['Highland Lavender', 'Herbaceous Blossom', 'Sweet Chamomile', 'Soft Cedar'],
+    fragrance_notes: [],
     ingredients: ['Kashmir Lavender Essential Oil', 'Sun-cured Temple Petals', 'Natural Binders'],
     description:
       'Designed specifically for sleep, relaxation and restorative yoga. The gentle herbaceous notes of Kashmir lavender soothe nervous tension and prepare the mind for deep, unbothered rest.',
@@ -283,7 +281,10 @@ export const PRODUCTS: Product[] = [
     is_bestseller: false,
     is_featured: true,
     images: [
-      '/images/products/cones/foxal-lavender-natural-incense-cones.jpg',
+      '/uploads/products/foxal-lavender-natural-incense-cones-thumb.jpg',
+      '/uploads/products/foxal-lavender-natural-incense-cones-2.jpg',
+      '/uploads/products/foxal-lavender-natural-incense-cones-3.jpg',
+      '/uploads/products/foxal-lavender-natural-incense-cones-4.jpg',
     ],
   },
   {
@@ -301,7 +302,7 @@ export const PRODUCTS: Product[] = [
     reviews_count: 204,
     in_stock: true,
     burn_time: '35 - 40 Minutes per Cone',
-    fragrance_notes: ['Dewy Pink Rose', 'Sweet Honeycomb', 'Temple Hibiscus', 'Light Sandal'],
+    fragrance_notes: [],
     ingredients: ['Kannauj Desi Gulab Extracts', 'Temple Rose Petals', 'Natural Organic Resins'],
     description:
       'Inspired by the legendary attar artisans of Kannauj. Packed with real petal extracts from sacred offerings, creating a gentle floral sanctuary that opens the heart chakra and invites positive abundance.',
@@ -310,7 +311,10 @@ export const PRODUCTS: Product[] = [
     is_bestseller: true,
     is_featured: true,
     images: [
-      '/images/products/cones/foxal-rose-natural-incense-cones.jpg',
+      '/uploads/products/foxal-rose-natural-incense-cones-thumb.jpg',
+      '/uploads/products/foxal-rose-natural-incense-cones-2.jpg',
+      '/uploads/products/foxal-rose-natural-incense-cones-3.jpg',
+      '/uploads/products/foxal-rose-natural-incense-cones-4.jpg',
     ],
   },
   {
@@ -328,7 +332,7 @@ export const PRODUCTS: Product[] = [
     reviews_count: 118,
     in_stock: true,
     burn_time: '35 - 40 Minutes per Cone',
-    fragrance_notes: ['Pure Indian Jasmine', 'Sweet Nectar', 'Night Bloom Petals', 'Soft Woods'],
+    fragrance_notes: [],
     ingredients: ['Madurai Jasmine Extracts', 'Temple Floral Blend', 'Natural Plant Gums'],
     description:
       'Exquisite and revitalizing. Each Bela cone is handcrafted to burn with a steady, serene plume that fills larger rooms effortlessly without suffocating heaviness or coal smoke.',
@@ -337,7 +341,10 @@ export const PRODUCTS: Product[] = [
     is_bestseller: false,
     is_featured: false,
     images: [
-      '/images/products/cones/foxal-jasmine-natural-incense-cones.jpg',
+      '/uploads/products/foxal-jasmine-natural-incense-cones-thumb.jpg',
+      '/uploads/products/foxal-jasmine-natural-incense-cones-2.jpg',
+      '/uploads/products/foxal-jasmine-natural-incense-cones-3.jpg',
+      '/uploads/products/foxal-jasmine-natural-incense-cones-4.jpg',
     ],
   },
 ];

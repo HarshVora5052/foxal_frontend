@@ -14,9 +14,9 @@ export const FaqAccordion: React.FC = () => {
   };
 
   return (
-    <section id="faqs" className="py-20 sm:py-28 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="faqs" className="pt-10 sm:pt-14 pb-16 sm:pb-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Header */}
-      <div className="text-center mb-14">
+      <div className="text-center mb-8 sm:mb-10">
         <Badge variant="gold" size="md" className="mb-3">
           Knowledge &amp; Clarity
         </Badge>

@@ -111,10 +111,7 @@ export default function AccountPage() {
           <div className="flex items-center gap-4">
             <div className="relative h-16 w-16 rounded-2xl overflow-hidden border-2 border-[#DFB15B] shrink-0 bg-[#272320]">
               <Image
-                src={
-                  user?.avatar ||
-                  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop'
-                }
+                src={user?.avatar || '/images/logo.png'}
                 alt="Account Avatar"
                 fill
                 sizes="64px"

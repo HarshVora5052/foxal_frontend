@@ -9,11 +9,11 @@ import { Button } from '@/components/ui/Button';
 import { QuantitySelector } from '@/components/ui/QuantitySelector';
 import { ProductGridCard } from '@/components/shop/ProductGridCard';
 import { useCartStore } from '@/store/useCartStore';
+import { useAuthStore } from '@/store/useAuthStore';
 import {
   ShoppingBag,
   Heart,
   Share2,
-  Clock,
   ShieldCheck,
   Sparkles,
   Flame,
@@ -39,12 +39,10 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<
-    'description' | 'notes' | 'how_to_use' | 'ingredients' | 'shipping'
+    'description' | 'how_to_use' | 'ingredients' | 'shipping'
   >('description');
-  const [isZoomed, setIsZoomed] = useState(false);
-  const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
   const [showStickyBar, setShowStickyBar] = useState(false);
-  
+
   // Review form state
   const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
   const [newRating, setNewRating] = useState(5);
@@ -55,7 +53,26 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
   const buyButtonRef = useRef<HTMLDivElement>(null);
 
   const { addItem, toggleWishlist, isInWishlist } = useCartStore();
+  const { isAuthenticated, openAuthModal } = useAuthStore();
   const isFavorite = isInWishlist(product.id);
+
+  const handleWishlistClick = () => {
+    if (!isAuthenticated) {
+      toast.error('Please sign in to save products to your wishlist');
+      openAuthModal('login');
+      return;
+    }
+    toggleWishlist(product);
+  };
+
+  const handleAddToCart = (qty = quantity) => {
+    if (!isAuthenticated) {
+      toast.error('Please sign in to add items to your cart');
+      openAuthModal('login');
+      return;
+    }
+    addItem(product, qty);
+  };
 
   // Intersection observer for sticky mobile bar
   useEffect(() => {
@@ -69,14 +86,6 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Zoom on hover handler
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    setZoomPosition({ x, y });
-  };
-
   const handleShare = () => {
     if (typeof window !== 'undefined' && navigator.share) {
       navigator
@@ -85,7 +94,7 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
           text: `Discover ${product.name} — 100% Charcoal-Free Natural Incense by FOXAL`,
           url: window.location.href,
         })
-        .catch(() => {});
+        .catch(() => { });
     } else {
       navigator.clipboard.writeText(window.location.href);
       toast.success('Sacred link copied to clipboard!');
@@ -106,62 +115,45 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 overflow-x-hidden w-full max-w-full">
       {/* ── Main Product Section (2 Columns) ── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-start">
-        {/* Left Column: Gallery with Zoom & Swipe */}
+        {/* Left Column: Gallery without Zoom */}
         <div className="lg:col-span-6 space-y-4">
-          <div
-            onMouseEnter={() => setIsZoomed(true)}
-            onMouseLeave={() => setIsZoomed(false)}
-            onMouseMove={handleMouseMove}
-            className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl border border-[#E3D4BD] bg-white shadow-card cursor-crosshair"
-          >
+          <div className="relative aspect-square sm:aspect-[4/5] w-full max-h-[480px] sm:max-h-[580px] overflow-hidden rounded-3xl border border-[#E3D4BD] bg-white shadow-card flex items-center justify-center">
             <Image
               src={product.images?.[activeImageIndex] || '/images/logo.png'}
               alt={product.name || 'FOXAL Incense'}
               fill
               priority
               sizes="(max-width: 1024px) 100vw, 50vw"
-              className={`object-cover object-center transition-transform duration-300 ${
-                isZoomed ? 'scale-150' : 'scale-100'
-              }`}
-              style={
-                isZoomed
-                  ? {
-                      transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
-                    }
-                  : undefined
-              }
+              style={{ objectFit: 'contain' }}
+              className="object-contain object-center p-4 sm:p-6 transition-all duration-200"
             />
 
-            {/* Badges */}
-            <div className="absolute top-4 left-4 flex flex-col gap-1.5 z-10 pointer-events-none">
-              <Badge variant="gold">{product.badge || '100% Herbal'}</Badge>
-              <Badge variant="sale">{product.discount_percent}% OFF</Badge>
-            </div>
-
             {/* Gallery Navigation arrows */}
-            {product.images.length > 1 && (
+            {product.images && product.images.length > 1 && (
               <>
                 <button
+                  type="button"
                   onClick={() =>
                     setActiveImageIndex((prev) =>
                       prev === 0 ? product.images.length - 1 : prev - 1
                     )
                   }
-                  className="absolute left-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/80 backdrop-blur-md text-[#0F0D0B] shadow-sm hover:bg-white transition-colors"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/85 backdrop-blur-md text-[#0F0D0B] shadow-sm hover:bg-white transition-colors"
                   aria-label="Previous image"
                 >
                   <ChevronLeft className="h-5 w-5" />
                 </button>
                 <button
+                  type="button"
                   onClick={() =>
                     setActiveImageIndex((prev) =>
                       prev === product.images.length - 1 ? 0 : prev + 1
                     )
                   }
-                  className="absolute right-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/80 backdrop-blur-md text-[#0F0D0B] shadow-sm hover:bg-white transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/85 backdrop-blur-md text-[#0F0D0B] shadow-sm hover:bg-white transition-colors"
                   aria-label="Next image"
                 >
                   <ChevronRight className="h-5 w-5" />
@@ -170,25 +162,27 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
             )}
           </div>
 
-          {/* Thumbnails */}
-          {product.images.length > 1 && (
-            <div className="flex gap-3 overflow-x-auto pb-1">
+          {/* Thumbnails from Backend (Primary Thumbnail + Added Images) */}
+          {product.images && product.images.length > 0 && (
+            <div className="flex gap-3 overflow-x-auto pb-2 pt-1">
               {product.images.map((img, idx) => (
                 <button
                   key={idx}
+                  type="button"
                   onClick={() => setActiveImageIndex(idx)}
-                  className={`relative h-20 w-16 shrink-0 overflow-hidden rounded-xl border-2 transition-all ${
-                    idx === activeImageIndex
-                      ? 'border-[#C8922A] shadow-md ring-2 ring-[#C8922A]/20'
-                      : 'border-[#E3D4BD] opacity-70 hover:opacity-100'
-                  }`}
+                  className={`relative h-20 w-16 sm:h-22 sm:w-18 shrink-0 overflow-hidden rounded-xl border-2 bg-white transition-all ${idx === activeImageIndex
+                    ? 'border-[#C8922A] shadow-md ring-2 ring-[#C8922A]/30 scale-102'
+                    : 'border-[#E3D4BD] opacity-70 hover:opacity-100 hover:border-[#C8922A]/60'
+                    }`}
+                  aria-label={`Select product image ${idx + 1}`}
                 >
                   <Image
                     src={img}
                     alt={`${product.name} thumbnail ${idx + 1}`}
                     fill
                     sizes="80px"
-                    className="object-cover object-center"
+                    style={{ objectFit: 'contain' }}
+                    className="object-contain object-center p-1"
                   />
                 </button>
               ))}
@@ -199,13 +193,9 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
         {/* Right Column: Details & Actions */}
         <div className="lg:col-span-6 space-y-6">
           <div>
-            <div className="flex items-center justify-between text-xs text-[#7A5230] mb-2">
+            <div className="text-xs text-[#7A5230] mb-2">
               <span className="font-semibold uppercase tracking-wider text-[#C8922A]">
                 {product.category_name}
-              </span>
-              <span className="flex items-center gap-1.5 font-medium bg-[#F6EFE4] px-2.5 py-1 rounded-full border border-[#E3D4BD]">
-                <Clock className="h-3.5 w-3.5 text-[#C8922A]" />
-                {product.burn_time}
               </span>
             </div>
 
@@ -234,19 +224,19 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
           </div>
 
           {/* Pricing Strip */}
-          <div className="rounded-2xl bg-[#F6EFE4] p-4 border border-[#E3D4BD] flex items-baseline justify-between">
-            <div className="flex items-baseline gap-3">
+          <div className="rounded-2xl bg-[#F6EFE4] p-3.5 sm:p-4 border border-[#E3D4BD] flex flex-wrap sm:flex-nowrap items-baseline justify-between gap-2.5">
+            <div className="flex items-baseline gap-2.5 sm:gap-3 flex-wrap">
               <span className="text-3xl sm:text-4xl font-bold text-[#0F0D0B]">
                 ₹{product.price}
               </span>
-              <span className="text-base text-[#AFA8A2] line-through">
+              <span className="text-sm sm:text-base text-[#AFA8A2] line-through">
                 MRP ₹{product.mrp}
               </span>
-              <span className="text-xs font-semibold text-[#354E3C] bg-[#EBF2ED] px-2 py-0.5 rounded border border-[#C7D9CD]">
+              <span className="text-[11px] sm:text-xs font-semibold text-[#354E3C] bg-[#EBF2ED] px-2.5 py-0.5 rounded border border-[#C7D9CD] whitespace-nowrap">
                 Save ₹{product.mrp - product.price} (25% OFF)
               </span>
             </div>
-            <span className="text-[11px] text-[#7A5230]">Inclusive of all taxes</span>
+            <span className="text-[11px] sm:text-xs text-[#7A5230] whitespace-nowrap">Inclusive of all taxes</span>
           </div>
 
           {/* Variant Spec & Stock Status */}
@@ -270,76 +260,73 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
 
             {/* In-Stock Indicator */}
             <div className="flex items-center gap-2 text-xs font-semibold text-[#354E3C]">
-              <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
               <span>In Stock — Dispatches within 24 hours from Gujarat</span>
             </div>
           </div>
 
           {/* Quantity Selector + Add to Cart + Buy Now + Wishlist */}
-          <div ref={buyButtonRef} className="space-y-3 pt-2 border-t border-[#E3D4BD]">
-            <div className="flex items-center gap-3">
-              <QuantitySelector
-                value={quantity}
-                onChange={setQuantity}
-                size="md"
-              />
+          <div ref={buyButtonRef} className="space-y-3 pt-3 border-t border-[#E3D4BD]">
+            {/* Top row: Quantity on Left, Wishlist & Share on Right */}
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <span className="text-xs font-bold text-[#7A5230] uppercase tracking-wider">Quantity:</span>
+                <QuantitySelector
+                  value={quantity}
+                  onChange={setQuantity}
+                  size="md"
+                />
+              </div>
 
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={handleWishlistClick}
+                  aria-label={isFavorite ? 'Remove from wishlist' : 'Add to wishlist'}
+                  className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl border border-[#E3D4BD] bg-white text-[#7A5230] hover:text-red-500 hover:bg-[#F6EFE4] transition-colors shadow-sm"
+                  title="Save to Wishlist"
+                >
+                  <Heart
+                    className={`h-4.5 w-4.5 sm:h-5 sm:w-5 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`}
+                  />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleShare}
+                  aria-label="Share product"
+                  className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl border border-[#E3D4BD] bg-white text-[#7A5230] hover:text-[#0F0D0B] hover:bg-[#F6EFE4] transition-colors shadow-sm"
+                  title="Share"
+                >
+                  <Share2 className="h-4.5 w-4.5 sm:h-5 sm:w-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* CTA: Add to Cart */}
+            <div className="pt-1">
               <Button
                 variant="primary"
                 size="lg"
                 fullWidth
-                onClick={() => addItem(product, quantity)}
-                leftIcon={<ShoppingBag className="h-5 w-5" />}
-                className="text-sm font-semibold tracking-wide"
+                onClick={() => handleAddToCart(quantity)}
+                leftIcon={<ShoppingBag className="h-5 w-5 shrink-0" />}
+                className="text-base font-bold tracking-wide py-3.5 shadow-md justify-center whitespace-nowrap"
               >
-                Add to Sacred Cart (₹{product.price * quantity})
+                Add to Cart (₹{product.price * quantity})
               </Button>
-
-              <button
-                type="button"
-                onClick={() => toggleWishlist(product)}
-                aria-label={isFavorite ? 'Remove from wishlist' : 'Add to wishlist'}
-                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-[#E3D4BD] bg-white text-[#7A5230] hover:text-red-500 hover:bg-[#F6EFE4] transition-colors shadow-sm"
-              >
-                <Heart
-                  className={`h-5 w-5 ${
-                    isFavorite ? 'fill-red-500 text-red-500' : ''
-                  }`}
-                />
-              </button>
-
-              <button
-                type="button"
-                onClick={handleShare}
-                aria-label="Share product"
-                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-[#E3D4BD] bg-white text-[#7A5230] hover:text-[#0F0D0B] hover:bg-[#F6EFE4] transition-colors shadow-sm"
-              >
-                <Share2 className="h-5 w-5" />
-              </button>
             </div>
-
-            <Button
-              variant="charcoal"
-              size="lg"
-              fullWidth
-              onClick={() => {
-                addItem(product, quantity);
-              }}
-              className="text-sm"
-            >
-              Buy Now with 1-Click
-            </Button>
           </div>
 
           {/* Trust Guarantees Strip */}
-          <div className="grid grid-cols-2 gap-3 pt-2 text-xs text-[#7A5230]">
-            <div className="flex items-center gap-2 bg-white/60 p-2.5 rounded-xl border border-[#E3D4BD]">
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-3 pt-2 text-[11px] sm:text-xs text-[#7A5230]">
+            <div className="flex items-center gap-2 bg-white/70 p-2.5 rounded-xl border border-[#E3D4BD] min-w-0">
               <Truck className="h-4 w-4 text-[#C8922A] shrink-0" />
-              <span>Free delivery above ₹499</span>
+              <span className="truncate sm:whitespace-normal">Free delivery above ₹499</span>
             </div>
-            <div className="flex items-center gap-2 bg-white/60 p-2.5 rounded-xl border border-[#E3D4BD]">
+            <div className="flex items-center gap-2 bg-white/70 p-2.5 rounded-xl border border-[#E3D4BD] min-w-0">
               <ShieldCheck className="h-4 w-4 text-[#354E3C] shrink-0" />
-              <span>100% Charcoal-free guarantee</span>
+              <span className="truncate sm:whitespace-normal">100% Charcoal-free</span>
             </div>
           </div>
         </div>
@@ -351,7 +338,6 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
         <div className="flex flex-wrap gap-2 border-b border-[#E3D4BD] pb-4">
           {[
             { id: 'description', label: 'Sacred Story' },
-            { id: 'notes', label: 'Fragrance Notes' },
             { id: 'how_to_use', label: 'How to Burn' },
             { id: 'ingredients', label: 'Pure Ingredients' },
             { id: 'shipping', label: 'Shipping & Returns' },
@@ -359,11 +345,10 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
-              className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
-                activeTab === tab.id
-                  ? 'bg-[#0F0D0B] text-white shadow-sm'
-                  : 'bg-[#F6EFE4] text-[#7A5230] hover:text-[#0F0D0B]'
-              }`}
+              className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${activeTab === tab.id
+                ? 'bg-[#0F0D0B] text-white shadow-sm'
+                : 'bg-[#F6EFE4] text-[#7A5230] hover:text-[#0F0D0B]'
+                }`}
             >
               {tab.label}
             </button>
@@ -393,28 +378,6 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
             </div>
           )}
 
-          {activeTab === 'notes' && (
-            <div className="space-y-4">
-              <p>
-                Crafted in accordance with Ayurvedic aromatic blending. Every layer unfolds
-                gently into your space:
-              </p>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
-                {product.fragrance_notes.map((note, idx) => (
-                  <div
-                    key={idx}
-                    className="rounded-2xl bg-white p-4 border border-[#E3D4BD] text-center"
-                  >
-                    <Sparkles className="h-5 w-5 text-[#C8922A] mx-auto mb-2" />
-                    <span className="text-xs font-bold text-[#0F0D0B] block">
-                      {note}
-                    </span>
-                    <span className="text-[10px] text-[#AFA8A2]">Natural Extract</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
           {activeTab === 'how_to_use' && (
             <div className="space-y-4">
@@ -554,11 +517,10 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
                       className="p-1 hover:scale-110 transition-transform"
                     >
                       <Star
-                        className={`h-6 w-6 ${
-                          star <= newRating
-                            ? 'fill-[#C8922A] text-[#C8922A]'
-                            : 'text-[#E3D4BD]'
-                        }`}
+                        className={`h-6 w-6 ${star <= newRating
+                          ? 'fill-[#C8922A] text-[#C8922A]'
+                          : 'text-[#E3D4BD]'
+                          }`}
                       />
                     </button>
                   ))}
@@ -682,7 +644,7 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
             <Button
               variant="primary"
               size="sm"
-              onClick={() => addItem(product, 1)}
+              onClick={() => handleAddToCart(1)}
               leftIcon={<ShoppingBag className="h-3.5 w-3.5" />}
               className="shrink-0 text-xs py-2 px-4 font-semibold"
             >

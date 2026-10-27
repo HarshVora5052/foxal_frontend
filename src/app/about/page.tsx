@@ -50,7 +50,7 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-20">
           <div className="relative h-96 sm:h-[480px] w-full rounded-3xl overflow-hidden border border-[#E3D4BD] shadow-card">
             <Image
-              src="https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=1000&auto=format&fit=crop"
+              src="/images/products/foxal-jasmine-incense-cones-pouring.jpg"
               alt="Temple flowers upcycling"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"

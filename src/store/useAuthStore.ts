@@ -21,6 +21,12 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
 
+  // Modal state
+  isAuthModalOpen: boolean;
+  authModalTab: 'login' | 'register';
+  openAuthModal: (tab?: 'login' | 'register') => void;
+  closeAuthModal: () => void;
+
   // Actions
   login: (credentials: { email: string; password: string }) => Promise<{ success: boolean; error?: string }>;
   register: (data: { name: string; email: string; password: string; password_confirmation: string }) => Promise<{ success: boolean; error?: string }>;
@@ -38,7 +44,7 @@ const DEMO_USER: User = {
   email: 'harshvora2003@gmail.com',
   role: 'admin',
   phone: '+91 98765 43210',
-  avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop',
+  avatar: '',
   created_at: '2026-10-01',
 };
 
@@ -49,6 +55,11 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       isAuthenticated: false,
       isLoading: false,
+
+      isAuthModalOpen: false,
+      authModalTab: 'login',
+      openAuthModal: (tab = 'login') => set({ isAuthModalOpen: true, authModalTab: tab }),
+      closeAuthModal: () => set({ isAuthModalOpen: false }),
 
       login: async ({ email, password }) => {
         set({ isLoading: true });
@@ -126,28 +137,26 @@ export const useAuthStore = create<AuthState>()(
             toast.success(`Account created successfully! Welcome, ${name}.`);
             return { success: true };
           }
-        } catch (_err) {
-          // Fallback registration
-          const role = email.includes('admin') ? 'admin' : 'customer';
-          const user: User = {
-            id: Date.now(),
-            name,
-            email,
-            role,
-            avatar: DEMO_USER.avatar,
-            created_at: new Date().toISOString(),
-          };
-          if (typeof document !== 'undefined' && role === 'admin') {
-            document.cookie = 'foxal_role=admin; path=/; max-age=86400';
+        } catch (err: any) {
+          set({ isLoading: false });
+          // Extract proper backend validation error message
+          const apiErrors = err.response?.data?.errors;
+          let errorMessage = err.response?.data?.message;
+
+          if (apiErrors && typeof apiErrors === 'object') {
+            const firstKey = Object.keys(apiErrors)[0];
+            if (Array.isArray(apiErrors[firstKey]) && apiErrors[firstKey].length > 0) {
+              errorMessage = apiErrors[firstKey][0];
+            }
           }
-          set({
-            user,
-            token: 'demo-token-session',
-            isAuthenticated: true,
-            isLoading: false,
-          });
-          toast.success(`Welcome to the FOXAL family, ${name}!`);
-          return { success: true };
+
+          if (errorMessage) {
+            toast.error(errorMessage);
+            return { success: false, error: errorMessage };
+          }
+
+          // If backend offline or network failure
+          return { success: false, error: 'Unable to connect to the authentication service. Please check your network.' };
         }
 
         set({ isLoading: false });

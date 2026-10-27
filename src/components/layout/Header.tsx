@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/store/useCartStore';
 import { useAuthStore } from '@/store/useAuthStore';
+import { toast } from 'sonner';
 import {
   ShoppingBag,
   Heart,
@@ -20,6 +21,7 @@ import { searchProducts } from '@/lib/products';
 import { Product } from '@/lib/mock';
 import { Modal } from '@/components/ui/Modal';
 import { MobileNav } from '@/components/layout/MobileNav';
+import { AuthModal } from '@/components/auth/AuthModal';
 import Image from 'next/image';
 
 interface HeaderProps {
@@ -36,7 +38,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu }) => {
   const [isSearching, setIsSearching] = useState(false);
 
   const { getTotalItems, openCart, wishlist, addItem } = useCartStore();
-  const { user, isAuthenticated } = useAuthStore();
+  const { user, isAuthenticated, openAuthModal } = useAuthStore();
   const totalCartItems = getTotalItems();
   const wishlistCount = wishlist.length;
 
@@ -76,26 +78,14 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu }) => {
   return (
     <>
       <header
-        className={`sticky top-0 z-40 transition-all duration-300 ${
-          isScrolled
+        className={`sticky top-0 z-40 transition-all duration-300 ${isScrolled
             ? 'bg-[#FAF7F2]/90 backdrop-blur-md shadow-[0_4px_20px_-2px_rgba(15,13,11,0.06)] border-b border-[#E3D4BD]/80 py-3'
             : 'bg-[#FAF7F2] border-b border-[#E3D4BD]/50 py-4'
-        }`}
+          }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
-            {/* Mobile hamburger menu */}
-            <div className="flex items-center lg:hidden">
-              <button
-                onClick={onOpenMobileMenu || (() => setIsInternalMobileOpen(true))}
-                className="p-2 -ml-2 rounded-xl text-[#0F0D0B] hover:bg-[#F6EFE4] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C8922A]"
-                aria-label="Open mobile navigation"
-              >
-                <Menu className="h-6 w-6" />
-              </button>
-            </div>
-
-            {/* Logo */}
+            {/* Logo (Left Side) */}
             <div className="flex items-center">
               <Link href="/" className="group flex items-center gap-3 select-none">
                 <div className="relative h-12 w-12 rounded-xl overflow-hidden bg-white/90 p-0.5 border border-[#E3D4BD]/80 shadow-sm group-hover:scale-105 transition-transform shrink-0 flex items-center justify-center">
@@ -141,7 +131,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu }) => {
               </Link>
             </nav>
 
-            {/* Actions: Search, Wishlist, Log Icon, and Cart (After Login) */}
+            {/* Actions: Search, Wishlist (After Login), User/Login, Cart (After Login), Mobile Menu */}
             <div className="flex items-center space-x-2 sm:space-x-3">
               {/* Search button */}
               <button
@@ -153,30 +143,44 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu }) => {
                 <Search className="h-5 w-5" />
               </button>
 
-              {/* Wishlist */}
-              <Link
-                href="/wishlist"
-                className="relative p-2.5 rounded-xl text-[#272320] hover:text-[#C8922A] hover:bg-[#F6EFE4] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C8922A]"
-                aria-label={`Wishlist (${wishlistCount} items)`}
-                title="Sacred Wishlist"
-              >
-                <Heart className="h-5 w-5" />
-                {wishlistCount > 0 && (
-                  <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#C8922A] text-[10px] font-bold text-white shadow-sm">
-                    {wishlistCount}
-                  </span>
-                )}
-              </Link>
+              {/* Wishlist: strictly visible only AFTER login */}
+              {isAuthenticated && (
+                <Link
+                  href="/wishlist"
+                  className="relative p-2.5 rounded-xl text-[#272320] hover:text-[#C8922A] hover:bg-[#F6EFE4] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C8922A]"
+                  aria-label={`Wishlist (${wishlistCount} items)`}
+                  title="Sacred Wishlist"
+                >
+                  <Heart className="h-5 w-5" />
+                  {wishlistCount > 0 && (
+                    <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#C8922A] text-[10px] font-bold text-white shadow-sm">
+                      {wishlistCount}
+                    </span>
+                  )}
+                </Link>
+              )}
 
-              {/* Log icon (Sign In / Account) */}
-              <Link
-                href={isAuthenticated ? '/account' : '/login'}
-                className="p-2.5 rounded-xl text-[#272320] hover:text-[#C8922A] hover:bg-[#F6EFE4] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C8922A]"
-                aria-label={isAuthenticated ? 'My Account' : 'Sign In'}
-                title={isAuthenticated ? `Account (${user?.name || 'Member'})` : 'Sign In'}
-              >
-                <User className="h-5 w-5" />
-              </Link>
+              {/* User icon: open AuthModal if guest, or /account if logged in */}
+              {isAuthenticated ? (
+                <Link
+                  href="/account"
+                  className="p-2.5 rounded-xl text-[#272320] hover:text-[#C8922A] hover:bg-[#F6EFE4] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C8922A]"
+                  aria-label="My Account"
+                  title={`Account (${user?.name || 'Member'})`}
+                >
+                  <User className="h-5 w-5" />
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => openAuthModal('login')}
+                  className="p-2.5 rounded-xl text-[#272320] hover:text-[#C8922A] hover:bg-[#F6EFE4] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C8922A]"
+                  aria-label="Sign In"
+                  title="Sign In"
+                >
+                  <User className="h-5 w-5" />
+                </button>
+              )}
 
               {/* Cart Button: Visible strictly AFTER login */}
               {isAuthenticated && (
@@ -193,6 +197,17 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu }) => {
                   </span>
                 </button>
               )}
+
+              {/* Mobile hamburger menu (Right Side on Mobile) */}
+              <div className="flex items-center lg:hidden">
+                <button
+                  onClick={onOpenMobileMenu || (() => setIsInternalMobileOpen(true))}
+                  className="p-2 rounded-xl text-[#0F0D0B] hover:bg-[#F6EFE4] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C8922A]"
+                  aria-label="Open mobile navigation"
+                >
+                  <Menu className="h-6 w-6" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -258,7 +273,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu }) => {
             {suggestions.length === 0 && !isSearching ? (
               <div className="py-8 text-center">
                 <p className="text-sm text-[#7A5230]">
-                  No matching fragrances found for &ldquo;{searchQuery}&rdquo;.
+                  No matching flavor found for &ldquo;{searchQuery}&rdquo;.
                 </p>
                 <div className="mt-4">
                   <Link
@@ -307,6 +322,12 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu }) => {
                     <button
                       type="button"
                       onClick={() => {
+                        if (!isAuthenticated) {
+                          toast.error('Please sign in to add items to your cart');
+                          setIsSearchOpen(false);
+                          router.push('/login');
+                          return;
+                        }
                         addItem(product, 1);
                         setIsSearchOpen(false);
                       }}
@@ -346,6 +367,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu }) => {
           </div>
         )}
       </Modal>
+
+      {/* Auth Modal (Login / Register Popup) */}
+      <AuthModal />
 
       {/* Internal Mobile Drawer (Active whenever Header is used standalone) */}
       {!onOpenMobileMenu && (

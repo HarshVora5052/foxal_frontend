@@ -8,7 +8,7 @@ import { Check, X, ShieldCheck, Flame, Heart, Sparkles } from 'lucide-react';
 
 export const WhyFoxal: React.FC = () => {
   return (
-    <section id="why-foxal" className="py-20 sm:py-28 bg-[#FAF7F2] border-t border-[#E3D4BD]">
+    <section id="why-foxal" className="py-20 sm:py-28 bg-[#FAF7F2] border-t border-[#E3D4BD] overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">

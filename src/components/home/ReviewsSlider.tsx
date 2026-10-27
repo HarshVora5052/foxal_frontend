@@ -21,7 +21,7 @@ export const ReviewsSlider: React.FC = () => {
   const current = REVIEWS[currentIndex];
 
   return (
-    <section className="py-20 sm:py-28 bg-[#F6EFE4]/60 border-t border-[#E3D4BD]">
+    <section className="pt-14 sm:pt-20 pb-10 sm:pb-12 bg-[#F6EFE4]/60 border-t border-[#E3D4BD]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-14">

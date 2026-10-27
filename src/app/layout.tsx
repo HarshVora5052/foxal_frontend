@@ -76,7 +76,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${cormorant.variable} ${inter.variable}`}>
-      <body className="min-h-screen bg-[#FAF7F2] text-[#0F0D0B] font-sans antialiased selection:bg-gold selection:text-white">
+      <body className="min-h-screen bg-[#FAF7F2] text-[#0F0D0B] font-sans antialiased selection:bg-gold selection:text-white overflow-x-hidden w-full max-w-full relative">
         <ReactQueryProvider>
           {children}
           <Toaster

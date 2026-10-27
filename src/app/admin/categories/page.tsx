@@ -30,9 +30,7 @@ export default function AdminCategoriesPage() {
     setName('');
     setSlug('');
     setDescription('');
-    setImage(
-      'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600&auto=format&fit=crop'
-    );
+    setImage('/images/categories/incense-sticks.jpg');
     setIsActive(true);
     setIsModalOpen(true);
   };
@@ -228,7 +226,7 @@ export default function AdminCategoriesPage() {
             label="Banner Image URL"
             value={image}
             onChange={(e) => setImage(e.target.value)}
-            placeholder="https://images.unsplash.com/..."
+            placeholder="/images/categories/incense-sticks.jpg"
           />
 
           <div className="pt-4 border-t border-[#E3D4BD] flex items-center justify-end gap-3">

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { AVAILABLE_FRAGRANCES } from '@/lib/products';
+import { AVAILABLE_flavor } from '@/lib/products';
 import { Sparkles, Flame, Check, RotateCcw } from 'lucide-react';
 
 export interface FilterState {
@@ -47,22 +47,21 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
       {/* 1. Category */}
       <div>
         <h4 className="text-xs font-bold uppercase tracking-wider text-[#7A5230] mb-3">
-          Collection
+          Product
         </h4>
         <div className="space-y-1.5">
           {[
-            { id: 'all', label: 'All Collections' },
+            { id: 'all', label: 'All Products' },
             { id: 'sticks', label: 'Incense Sticks (250g)', icon: <Flame className="h-3.5 w-3.5 text-[#C8922A]" /> },
             { id: 'cones', label: 'Incense Cones (60 pcs)', icon: <Sparkles className="h-3.5 w-3.5 text-[#C8922A]" /> },
           ].map((item) => (
             <button
               key={item.id}
               onClick={() => onFilterChange({ ...filters, category: item.id })}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-colors ${
-                filters.category === item.id
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-colors ${filters.category === item.id
                   ? 'bg-[#0F0D0B] text-white shadow-sm'
                   : 'bg-[#F6EFE4]/60 text-[#0F0D0B] hover:bg-[#F6EFE4]'
-              }`}
+                }`}
             >
               <span className="flex items-center gap-2">
                 {item.icon}
@@ -74,23 +73,22 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
         </div>
       </div>
 
-      {/* 2. Fragrance Notes */}
+      {/* 2. Choose Flavour */}
       <div>
         <h4 className="text-xs font-bold uppercase tracking-wider text-[#7A5230] mb-3">
-          Aromatic Note
+          Choose Flavour
         </h4>
         <div className="flex flex-wrap gap-1.5">
           <button
             onClick={() => onFilterChange({ ...filters, fragrance: '' })}
-            className={`text-xs px-2.5 py-1 rounded-lg border transition-all ${
-              !filters.fragrance
+            className={`text-xs px-2.5 py-1 rounded-lg border transition-all ${!filters.fragrance
                 ? 'bg-[#C8922A] text-white border-[#C8922A] font-semibold'
                 : 'bg-white border-[#E3D4BD] text-[#7A5230] hover:border-[#C8922A]'
-            }`}
+              }`}
           >
-            All Notes
+            All Flavours
           </button>
-          {AVAILABLE_FRAGRANCES.map((note) => {
+          {AVAILABLE_flavor.map((note) => {
             const isSelected = filters.fragrance.toLowerCase() === note.toLowerCase();
             return (
               <button
@@ -101,11 +99,10 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                     fragrance: isSelected ? '' : note.toLowerCase(),
                   })
                 }
-                className={`text-xs px-2.5 py-1 rounded-lg border transition-all ${
-                  isSelected
+                className={`text-xs px-2.5 py-1 rounded-lg border transition-all ${isSelected
                     ? 'bg-[#C8922A] text-white border-[#C8922A] font-semibold'
                     : 'bg-white border-[#E3D4BD] text-[#7A5230] hover:border-[#C8922A]'
-                }`}
+                  }`}
               >
                 {note}
               </button>
@@ -129,11 +126,10 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
             <button
               key={item.value}
               onClick={() => onFilterChange({ ...filters, minRating: item.value })}
-              className={`w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-xs transition-colors ${
-                filters.minRating === item.value
+              className={`w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-xs transition-colors ${filters.minRating === item.value
                   ? 'bg-[#FBF5EA] text-[#9A6A16] font-bold border border-[#DFB15B]/50'
                   : 'text-[#7A5230] hover:bg-[#F6EFE4]'
-              }`}
+                }`}
             >
               <span>{item.label}</span>
               {filters.minRating === item.value && <Check className="h-3 w-3" />}

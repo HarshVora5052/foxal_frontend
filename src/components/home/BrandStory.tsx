@@ -18,7 +18,7 @@ export const BrandStory: React.FC = () => {
           <div className="relative">
             <div className="relative h-96 sm:h-[460px] w-full rounded-3xl overflow-hidden border border-[#C8922A]/30 shadow-2xl">
               <Image
-                src="https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=1000&auto=format&fit=crop"
+                src="/images/products/foxal-jasmine-incense-cones-flatlay.jpg"
                 alt="Handcrafting organic natural incense sticks"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -28,7 +28,7 @@ export const BrandStory: React.FC = () => {
             </div>
 
             {/* Overlapping small card */}
-            <div className="absolute -bottom-6 -right-4 sm:-bottom-8 sm:right-6 bg-[#FAF7F2] text-[#0F0D0B] p-5 rounded-2xl border border-[#C8922A]/40 shadow-2xl max-w-xs">
+            <div className="absolute -bottom-4 right-2 sm:-bottom-8 sm:right-6 bg-[#FAF7F2] text-[#0F0D0B] p-4 sm:p-5 rounded-2xl border border-[#C8922A]/40 shadow-2xl max-w-[250px] sm:max-w-xs">
               <div className="flex items-center gap-2 mb-1 text-xs font-bold text-[#C8922A] uppercase tracking-wider">
                 <Sparkles className="h-4 w-4" />
                 <span>Sacred Mission</span>
