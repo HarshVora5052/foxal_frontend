@@ -12,7 +12,6 @@ import {
   ShoppingBag,
   Heart,
   ShieldCheck,
-  PhoneCall,
   User,
   Info,
   Truck,
@@ -218,17 +217,6 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
 
           </div>
 
-          {/* Contact / Help Footer */}
-          <div className="pt-6 border-t border-[#E3D4BD] text-xs text-[#7A5230]">
-            <p className="flex items-center gap-2 mb-1">
-              <PhoneCall className="h-3.5 w-3.5 text-[#C8922A]" />
-              Need assistance? WhatsApp Support
-            </p>
-            <p className="font-semibold text-[#0F0D0B]">+91 98765 43210</p>
-            <p className="mt-3 text-[11px] text-[#AFA8A2]">
-              Made with pure devotion in Gujarat &amp; Uttar Pradesh, India
-            </p>
-          </div>
         </div>
       </Drawer>
     </>
