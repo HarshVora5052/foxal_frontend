@@ -258,8 +258,58 @@ function filterLocalProducts(params: ProductFilterParams): PaginatedProducts {
   };
 }
 
+// ── In-Memory API Cache with TTL (2 Minutes) ──
+interface CacheEntry<T> {
+  data: T;
+  timestamp: number;
+}
+
+const memoryCache = new Map<string, CacheEntry<any>>();
+const CACHE_TTL_MS = 2 * 60 * 1000; // 2 minutes
+
+function getFromCache<T>(key: string): T | null {
+  const entry = memoryCache.get(key);
+  if (!entry) return null;
+  if (Date.now() - entry.timestamp > CACHE_TTL_MS) {
+    memoryCache.delete(key);
+    return null;
+  }
+  return entry.data as T;
+}
+
+function setInCache<T>(key: string, data: T): void {
+  // Cap at 100 entries to prevent memory footprint growth
+  if (memoryCache.size > 100) {
+    const firstKey = memoryCache.keys().next().value;
+    if (firstKey) memoryCache.delete(firstKey);
+  }
+  memoryCache.set(key, { data, timestamp: Date.now() });
+}
+
+export function invalidateProductCache(): void {
+  memoryCache.clear();
+}
+
 /**
- * Fetch products list (Laravel API with fallback)
+ * Fetch with automatic AbortSignal timeout to prevent hanging connections
+ */
+async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutMs = 4500): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+    return response;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/**
+ * Fetch products list (Laravel API with multi-layer caching and fallback)
  */
 export async function getProducts(params: ProductFilterParams = {}): Promise<PaginatedProducts> {
   const query = new URLSearchParams();
@@ -274,57 +324,58 @@ export async function getProducts(params: ProductFilterParams = {}): Promise<Pag
   if (params.limit) query.set('limit', params.limit.toString());
   if (params.search) query.set('search', params.search);
 
+  const cacheKey = `products_${query.toString()}`;
+  const cached = getFromCache<PaginatedProducts>(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
   try {
-    const res = await fetch(`${BACKEND_URL}/api/products?${query.toString()}`, {
+    const res = await fetchWithTimeout(`${BACKEND_URL}/api/products?${query.toString()}`, {
       headers: {
         Accept: 'application/json',
       },
-      next: { revalidate: 60 },
+      next: { revalidate: 60, tags: ['products'] },
     });
 
     if (res.ok) {
       const json = await res.json();
+      let result: PaginatedProducts | null = null;
 
       // Case 1: Standard Laravel API response: { success: true, data: [...] }
       if (json.success && Array.isArray(json.data)) {
         const normalized = json.data.map(normalizeProduct);
-        return {
+        result = {
           products: normalized,
           total: normalized.length,
           page: 1,
           limit: normalized.length,
           totalPages: 1,
         };
-      }
-
-      // Case 2: Laravel Resource Collection with pagination: { success: true, data: { data: [...], total, ... } }
-      if (json.success && json.data && Array.isArray(json.data.data)) {
+      } else if (json.success && json.data && Array.isArray(json.data.data)) {
+        // Case 2: Laravel Resource Collection with pagination
         const normalized = json.data.data.map(normalizeProduct);
-        return {
+        result = {
           products: normalized,
           total: json.data.total ?? normalized.length,
           page: json.data.current_page ?? 1,
           limit: json.data.per_page ?? normalized.length,
           totalPages: json.data.last_page ?? 1,
         };
-      }
-
-      // Case 3: Custom object with .products array: { success: true, data: { products: [...] } }
-      if (json.success && json.data && Array.isArray(json.data.products)) {
+      } else if (json.success && json.data && Array.isArray(json.data.products)) {
+        // Case 3: Custom object with .products array
         const normalized = json.data.products.map(normalizeProduct);
-        return {
+        result = {
           products: normalized,
           total: json.data.total ?? normalized.length,
           page: json.data.page ?? 1,
           limit: json.data.limit ?? normalized.length,
           totalPages: json.data.totalPages ?? 1,
         };
-      }
-
-      // Case 4: Direct array: [ ... ]
-      if (Array.isArray(json)) {
+      } else if (Array.isArray(json)) {
+        // Case 4: Direct array
         const normalized = json.map(normalizeProduct);
-        return {
+        result = {
           products: normalized,
           total: normalized.length,
           page: 1,
@@ -332,76 +383,111 @@ export async function getProducts(params: ProductFilterParams = {}): Promise<Pag
           totalPages: 1,
         };
       }
+
+      if (result) {
+        setInCache(cacheKey, result);
+        return result;
+      }
     }
   } catch (_err) {
     // Backend API is offline or unreachable — fallback gracefully to local data
   }
 
-  return filterLocalProducts(params);
+  const localResult = filterLocalProducts(params);
+  setInCache(cacheKey, localResult);
+  return localResult;
 }
 
 /**
- * Fetch single product by slug
+ * Fetch single product by slug (with in-memory cache & fallback)
  */
 export async function getProductBySlug(slug: string): Promise<Product | null> {
+  const cacheKey = `product_${slug}`;
+  const cached = getFromCache<Product>(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
   try {
-    const res = await fetch(`${BACKEND_URL}/api/products/${slug}`, {
+    const res = await fetchWithTimeout(`${BACKEND_URL}/api/products/${slug}`, {
       headers: {
         Accept: 'application/json',
       },
-      next: { revalidate: 60 },
+      next: { revalidate: 60, tags: [`product_${slug}`] },
     });
 
     if (res.ok) {
       const json = await res.json();
       if (json.success && json.data) {
-        return normalizeProduct(json.data);
+        const normalized = normalizeProduct(json.data);
+        setInCache(cacheKey, normalized);
+        return normalized;
       }
     }
   } catch (_err) {
     // Fallback to local products
   }
 
-  const found = getBaseProducts().find((p) => p.slug === slug);
-  return found || null;
+  const found = getBaseProducts().find((p) => p.slug === slug) || null;
+  if (found) {
+    setInCache(cacheKey, found);
+  }
+  return found;
 }
 
 /**
- * Fetch related products (same category, excluding current product)
+ * Fetch related products (same category, excluding current product, cached)
  */
 export async function getRelatedProducts(currentId: number, category: string, limit = 4): Promise<Product[]> {
+  const cacheKey = `related_${category}_${currentId}_${limit}`;
+  const cached = getFromCache<Product[]>(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
   try {
-    const res = await fetch(`${BACKEND_URL}/api/products?category=${category}&limit=${limit + 1}`, {
+    const res = await fetchWithTimeout(`${BACKEND_URL}/api/products?category=${category}&limit=${limit + 1}`, {
       headers: { Accept: 'application/json' },
       next: { revalidate: 60 },
     });
     if (res.ok) {
       const json = await res.json();
       if (json.success && json.data?.products) {
-        return json.data.products.filter((p: Product) => p.id !== currentId).slice(0, limit);
+        const related = json.data.products.filter((p: Product) => p.id !== currentId).slice(0, limit);
+        setInCache(cacheKey, related);
+        return related;
       }
     }
   } catch (_err) {
     // Fallback
   }
 
-  return getBaseProducts().filter((p) => p.id !== currentId && p.category === category).slice(0, limit);
+  const localRelated = getBaseProducts().filter((p) => p.id !== currentId && p.category === category).slice(0, limit);
+  setInCache(cacheKey, localRelated);
+  return localRelated;
 }
 
 /**
- * Live search suggestions (debounced)
+ * Live search suggestions (debounced & cached)
  */
 export async function searchProducts(keyword: string): Promise<Product[]> {
   if (!keyword || !keyword.trim()) return [];
   const q = keyword.trim().toLowerCase();
 
+  const cacheKey = `search_${q}`;
+  const cached = getFromCache<Product[]>(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
   try {
-    const res = await fetch(`${BACKEND_URL}/api/products/search?q=${encodeURIComponent(q)}`, {
+    const res = await fetchWithTimeout(`${BACKEND_URL}/api/products/search?q=${encodeURIComponent(q)}`, {
       headers: { Accept: 'application/json' },
-    });
+    }, 3000);
     if (res.ok) {
       const json = await res.json();
       if (json.success && Array.isArray(json.data)) {
+        setInCache(cacheKey, json.data);
         return json.data;
       }
     }
@@ -409,12 +495,15 @@ export async function searchProducts(keyword: string): Promise<Product[]> {
     // Fallback
   }
 
-  return getBaseProducts().filter(
+  const localMatches = getBaseProducts().filter(
     (p) =>
       p.name.toLowerCase().includes(q) ||
       p.category_name.toLowerCase().includes(q) ||
       p.fragrance_notes.some((n) => n.toLowerCase().includes(q))
   ).slice(0, 6);
+
+  setInCache(cacheKey, localMatches);
+  return localMatches;
 }
 
 /**
