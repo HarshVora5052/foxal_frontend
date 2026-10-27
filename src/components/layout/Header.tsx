@@ -160,27 +160,29 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu }) => {
                 </Link>
               )}
 
-              {/* User icon: open AuthModal if guest, or /account if logged in */}
-              {isAuthenticated ? (
-                <Link
-                  href="/account"
-                  className="p-2.5 rounded-xl text-[#272320] hover:text-[#C8922A] hover:bg-[#F6EFE4] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C8922A]"
-                  aria-label="My Account"
-                  title={`Account (${user?.name || 'Member'})`}
-                >
-                  <User className="h-5 w-5" />
-                </Link>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => openAuthModal('login')}
-                  className="p-2.5 rounded-xl text-[#272320] hover:text-[#C8922A] hover:bg-[#F6EFE4] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C8922A]"
-                  aria-label="Sign In"
-                  title="Sign In"
-                >
-                  <User className="h-5 w-5" />
-                </button>
-              )}
+              {/* User icon: Desktop only. On mobile it is placed inside the 3-line hamburger menu */}
+              <div className="hidden lg:flex items-center">
+                {isAuthenticated ? (
+                  <Link
+                    href="/account"
+                    className="p-2.5 rounded-xl text-[#272320] hover:text-[#C8922A] hover:bg-[#F6EFE4] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C8922A]"
+                    aria-label="My Account"
+                    title={`Account (${user?.name || 'Member'})`}
+                  >
+                    <User className="h-5 w-5" />
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => openAuthModal('login')}
+                    className="p-2.5 rounded-xl text-[#272320] hover:text-[#C8922A] hover:bg-[#F6EFE4] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C8922A]"
+                    aria-label="Sign In"
+                    title="Sign In"
+                  >
+                    <User className="h-5 w-5" />
+                  </button>
+                )}
+              </div>
 
               {/* Cart Button: Visible strictly AFTER login */}
               {isAuthenticated && (

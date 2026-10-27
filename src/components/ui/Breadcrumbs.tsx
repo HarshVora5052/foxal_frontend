@@ -19,12 +19,12 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
   className = '',
 }) => {
   return (
-    <nav aria-label="Breadcrumb" className={`flex items-center text-xs text-[#7A5230] ${className}`}>
-      <ol className="flex items-center space-x-2">
-        <li>
+    <nav aria-label="Breadcrumb" className={`text-xs text-[#7A5230] w-full max-w-full ${className}`}>
+      <ol className="flex flex-wrap items-center gap-x-1.5 sm:gap-x-2 gap-y-1 leading-relaxed">
+        <li className="inline-flex items-center">
           <Link
             href="/"
-            className="flex items-center hover:text-[#C8922A] transition-colors"
+            className="inline-flex items-center hover:text-[#C8922A] transition-colors shrink-0"
             aria-label="Home"
           >
             <Home className="h-3.5 w-3.5" />
@@ -35,16 +35,16 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
           const isLast = index === items.length - 1;
 
           return (
-            <li key={index} className="flex items-center space-x-2">
+            <li key={index} className="inline-flex items-center gap-x-1.5 sm:gap-x-2">
               <ChevronRight className="h-3 w-3 text-[#AFA8A2] shrink-0" />
               {isLast || !item.href ? (
-                <span className="font-semibold text-[#0F0D0B] truncate max-w-[200px]" aria-current="page">
+                <span className="font-semibold text-[#0F0D0B] break-words line-clamp-1" aria-current="page">
                   {item.label}
                 </span>
               ) : (
                 <Link
                   href={item.href}
-                  className="hover:text-[#C8922A] transition-colors truncate max-w-[150px]"
+                  className="hover:text-[#C8922A] transition-colors whitespace-nowrap shrink-0"
                 >
                   {item.label}
                 </Link>

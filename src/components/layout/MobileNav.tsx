@@ -43,16 +43,63 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
         maxWidth="sm"
       >
         <div className="flex flex-col h-full justify-between pb-8">
-          <div className="space-y-6">
+          <div className="space-y-5">
+            {/* User Account / Profile Card inside 3-line menu */}
+            {isAuthenticated ? (
+              <Link
+                href="/account"
+                onClick={onClose}
+                className="flex items-center gap-3 p-3.5 rounded-2xl bg-white border border-[#E3D4BD] hover:border-[#C8922A] transition-all shadow-sm"
+              >
+                <div className="h-10 w-10 rounded-full bg-[#C8922A]/10 text-[#C8922A] flex items-center justify-center shrink-0 border border-[#C8922A]/30">
+                  <User className="h-5 w-5" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <span className="text-xs font-bold text-[#0F0D0B] block truncate">
+                    {user?.name || 'Devotee Account'}
+                  </span>
+                  <span className="text-[11px] text-[#7A5230] truncate block">
+                    {user?.email || 'My Profile & Orders'}
+                  </span>
+                </div>
+                <span className="text-[10px] bg-[#EBF2ED] text-[#354E3C] font-semibold px-2 py-0.5 rounded-full border border-[#C7D9CD]">
+                  Active
+                </span>
+              </Link>
+            ) : (
+              <div className="p-3.5 rounded-2xl bg-white border border-[#E3D4BD] shadow-sm flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="h-9 w-9 rounded-full bg-[#F6EFE4] text-[#7A5230] flex items-center justify-center shrink-0 border border-[#E3D4BD]">
+                    <User className="h-4 w-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <span className="text-xs font-bold text-[#0F0D0B] block truncate">
+                      Welcome Devotee
+                    </span>
+                    <span className="text-[10px] text-[#7A5230] truncate block">
+                      Sign in for sacred orders
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    openAuthModal('login');
+                  }}
+                  className="text-xs font-bold bg-[#C8922A] text-white px-3 py-1.5 rounded-xl hover:bg-[#9A6A16] transition-colors shrink-0 shadow-sm"
+                >
+                  Sign In
+                </button>
+              </div>
+            )}
+
             {/* Value banner */}
-            <div className="rounded-xl bg-[#F6EFE4] p-3.5 border border-[#E3D4BD]">
+            <div className="rounded-xl bg-[#F6EFE4] p-3 border border-[#E3D4BD]">
               <div className="flex items-center gap-2 text-xs font-semibold text-[#354E3C]">
                 <ShieldCheck className="h-4 w-4 text-[#4A6B53]" />
                 <span>Zero Carbon Monoxide · 100% Herbal</span>
               </div>
-              <p className="text-[11px] text-[#7A5230] mt-1">
-                Handcrafted in India with recycled temple offerings.
-              </p>
             </div>
 
             {/* Navigation links */}
