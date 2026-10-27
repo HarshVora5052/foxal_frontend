@@ -8,6 +8,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { useOrderStore, Order } from '@/store/useOrderStore';
 import { useCartStore } from '@/store/useCartStore';
 import { PRODUCTS } from '@/lib/mock';
+import { openInvoiceWindow } from '@/lib/invoice';
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -86,10 +87,8 @@ export default function AccountPage() {
   };
 
   const handleDownloadInvoice = (order: Order) => {
-    toast.success(`Downloading sacred tax invoice for ${order.id}...`);
-    if (typeof window !== 'undefined') {
-      window.print();
-    }
+    toast.success(`Opening sacred tax invoice for ${order.id}...`);
+    openInvoiceWindow(order);
   };
 
   const navItems = [

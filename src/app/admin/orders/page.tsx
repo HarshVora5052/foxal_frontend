@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { useOrderStore, Order } from '@/store/useOrderStore';
+import { openInvoiceWindow } from '@/lib/invoice';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Drawer } from '@/components/ui/Drawer';
@@ -68,9 +69,11 @@ export default function AdminOrdersPage() {
   };
 
   const handlePrintInvoice = () => {
-    toast.success('Preparing tax invoice print dialog...');
-    if (typeof window !== 'undefined') {
-      window.print();
+    if (activeDrawerOrder) {
+      toast.success(`Preparing tax invoice for ${activeDrawerOrder.id}...`);
+      openInvoiceWindow(activeDrawerOrder);
+    } else if (orders[0]) {
+      openInvoiceWindow(orders[0]);
     }
   };
 

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { useOrderStore } from '@/store/useOrderStore';
+import { openInvoiceWindow } from '@/lib/invoice';
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -29,11 +30,11 @@ export default function CheckoutSuccessPage() {
   const order = getOrderById(orderId) || orders[0];
 
   const handleDownloadInvoice = () => {
-    toast.success('Preparing sacred tax invoice...', {
-      description: `Invoice for ${orderId} downloaded.`,
-    });
-    if (typeof window !== 'undefined') {
-      window.print();
+    if (order) {
+      toast.success('Opening sacred tax invoice...', {
+        description: `Tax Invoice for ${order.id} generated.`,
+      });
+      openInvoiceWindow(order);
     }
   };
 
