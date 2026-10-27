@@ -9,7 +9,6 @@ import { BannerSlider } from '@/components/home/BannerSlider';
 import { CategoryBanners } from '@/components/home/CategoryBanners';
 import { BestSellers } from '@/components/home/BestSellers';
 import { CategoryShowcase } from '@/components/home/CategoryShowcase';
-import { WhyFoxal } from '@/components/home/WhyFoxal';
 import { BrandStory } from '@/components/home/BrandStory';
 import { FaqAccordion } from '@/components/home/FaqAccordion';
 import { CartDrawer } from '@/components/cart/CartDrawer';
@@ -44,8 +43,6 @@ export default function HomePage() {
         {/* 8 & 9. Category Showcase (Incense Cones & Premium Incense Sticks) */}
         <CategoryShowcase onQuickView={(p) => setQuickViewProduct(p)} />
 
-        {/* 10. Why FOXAL (Charcoal vs Natural Comparison Table) */}
-        <WhyFoxal />
 
         {/* 11. Brand Story (Sacred Temple Flowers & Indian Artisan Guild) */}
         <BrandStory />
