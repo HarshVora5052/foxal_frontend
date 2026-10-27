@@ -97,17 +97,17 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 overflow-x-hidden w-full max-w-full">
       {/* ── Main Product Section (2 Columns) ── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-start">
-        {/* Left Column: Gallery without Zoom */}
-        <div className="lg:col-span-6 space-y-4">
-          <div className="relative aspect-square sm:aspect-[4/5] w-full max-h-[480px] sm:max-h-[580px] overflow-hidden rounded-3xl border border-[#E3D4BD] bg-white shadow-card flex items-center justify-center">
+        {/* Left Column: Compact Gallery without wide white borders */}
+        <div className="lg:col-span-5 flex flex-col items-center lg:items-start space-y-4">
+          <div className="relative w-full max-w-[340px] sm:max-w-[400px] aspect-[3/4] sm:aspect-[4/5] overflow-hidden rounded-2xl sm:rounded-3xl border border-[#E3D4BD] bg-[#FAF7F2] shadow-sm flex items-center justify-center">
             <Image
               src={product.images?.[activeImageIndex] || '/images/logo.png'}
               alt={product.name || 'FOXAL Incense'}
               fill
               priority
-              sizes="(max-width: 1024px) 100vw, 50vw"
+              sizes="(max-width: 640px) 340px, 400px"
               style={{ objectFit: 'contain' }}
-              className="object-contain object-center p-4 sm:p-6 transition-all duration-200"
+              className="object-contain object-center p-2 sm:p-3 transition-all duration-200"
             />
 
             {/* Gallery Navigation arrows */}
@@ -142,14 +142,14 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
           </div>
 
           {/* Thumbnails from Backend (Primary Thumbnail + Added Images) */}
-          {product.images && product.images.length > 0 && (
-            <div className="flex gap-3 overflow-x-auto pb-2 pt-1">
+          {product.images && product.images.length > 1 && (
+            <div className="flex gap-2.5 overflow-x-auto pb-1 max-w-[340px] sm:max-w-[400px] w-full">
               {product.images.map((img, idx) => (
                 <button
                   key={idx}
                   type="button"
                   onClick={() => setActiveImageIndex(idx)}
-                  className={`relative h-20 w-16 sm:h-22 sm:w-18 shrink-0 overflow-hidden rounded-xl border-2 bg-white transition-all ${idx === activeImageIndex
+                  className={`relative h-16 w-14 sm:h-18 sm:w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-[#FAF7F2] transition-all ${idx === activeImageIndex
                     ? 'border-[#C8922A] shadow-md ring-2 ring-[#C8922A]/30 scale-102'
                     : 'border-[#E3D4BD] opacity-70 hover:opacity-100 hover:border-[#C8922A]/60'
                     }`}
@@ -159,7 +159,7 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
                     src={img}
                     alt={`${product.name} thumbnail ${idx + 1}`}
                     fill
-                    sizes="80px"
+                    sizes="64px"
                     style={{ objectFit: 'contain' }}
                     className="object-contain object-center p-1"
                   />
@@ -170,7 +170,7 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
         </div>
 
         {/* Right Column: Details & Actions */}
-        <div className="lg:col-span-6 space-y-6">
+        <div className="lg:col-span-7 space-y-6">
           <div>
             <div className="text-xs text-[#7A5230] mb-2">
               <span className="font-semibold uppercase tracking-wider text-[#C8922A]">
