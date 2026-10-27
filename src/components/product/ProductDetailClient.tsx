@@ -20,7 +20,6 @@ import {
   Truck,
   RotateCcw,
   Check,
-  Star,
   ChevronLeft,
   ChevronRight,
   Gift,
@@ -42,13 +41,6 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
     'description' | 'how_to_use' | 'ingredients' | 'shipping'
   >('description');
   const [showStickyBar, setShowStickyBar] = useState(false);
-
-  // Review form state
-  const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
-  const [newRating, setNewRating] = useState(5);
-  const [reviewerName, setReviewerName] = useState('');
-  const [reviewComment, setReviewComment] = useState('');
-  const [submittedReview, setSubmittedReview] = useState(false);
 
   const buyButtonRef = useRef<HTMLDivElement>(null);
 
@@ -99,19 +91,6 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
       navigator.clipboard.writeText(window.location.href);
       toast.success('Sacred link copied to clipboard!');
     }
-  };
-
-  const handleReviewSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!reviewerName.trim() || !reviewComment.trim()) {
-      toast.error('Please fill in your name and thoughts.');
-      return;
-    }
-    setSubmittedReview(true);
-    setIsReviewFormOpen(false);
-    toast.success('Thank you for sharing your sacred thoughts!', {
-      description: 'Your verified review has been recorded.',
-    });
   };
 
   return (
@@ -434,25 +413,15 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
         </div>
       </div>
 
-      {/* ── Verified Customer Reviews Section with Rating Breakdown & Form ── */}
+      {/* ── Verified Customer Reviews Section with Rating Breakdown ── */}
       <section id="reviews" className="mt-20 pt-12 border-t border-[#E3D4BD]">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
-          <div>
-            <h3 className="font-serif text-3xl font-bold text-[#0F0D0B]">
-              Customer Experiences
-            </h3>
-            <p className="text-xs text-[#7A5230] mt-1">
-              Based on {product.reviews_count} verified purchases across India
-            </p>
-          </div>
-
-          <Button
-            variant="outline"
-            size="md"
-            onClick={() => setIsReviewFormOpen(!isReviewFormOpen)}
-          >
-            {isReviewFormOpen ? 'Close Review Form' : 'Write a Sacred Review'}
-          </Button>
+        <div className="mb-10">
+          <h3 className="font-serif text-3xl font-bold text-[#0F0D0B]">
+            Customer Experiences
+          </h3>
+          <p className="text-xs text-[#7A5230] mt-1">
+            Based on {product.reviews_count} verified purchases across India
+          </p>
         </div>
 
         {/* Rating Breakdown Summary */}
@@ -497,67 +466,7 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
           </div>
         </div>
 
-        {/* Write Review Form */}
-        {isReviewFormOpen && (
-          <div className="rounded-3xl bg-[#F6EFE4] p-6 sm:p-8 border border-[#E3D4BD] mb-10">
-            <h4 className="font-serif text-xl font-bold text-[#0F0D0B] mb-2">
-              Share Your Thoughts on {product.name}
-            </h4>
-            <form onSubmit={handleReviewSubmit} className="space-y-4">
-              <div>
-                <label className="text-xs font-bold text-[#7A5230] block mb-1">
-                  Your Overall Rating:
-                </label>
-                <div className="flex gap-1 text-[#C8922A]">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      type="button"
-                      key={star}
-                      onClick={() => setNewRating(star)}
-                      className="p-1 hover:scale-110 transition-transform"
-                    >
-                      <Star
-                        className={`h-6 w-6 ${star <= newRating
-                          ? 'fill-[#C8922A] text-[#C8922A]'
-                          : 'text-[#E3D4BD]'
-                          }`}
-                      />
-                    </button>
-                  ))}
-                </div>
-              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <input
-                  type="text"
-                  required
-                  placeholder="Your Name (e.g. Meera S.)"
-                  value={reviewerName}
-                  onChange={(e) => setReviewerName(e.target.value)}
-                  className="rounded-xl border border-[#E3D4BD] bg-white p-3 text-xs text-[#0F0D0B] focus:outline-none focus:ring-2 focus:ring-[#C8922A]"
-                />
-                <input
-                  type="text"
-                  placeholder="Your City (e.g. Pune, Maharashtra)"
-                  className="rounded-xl border border-[#E3D4BD] bg-white p-3 text-xs text-[#0F0D0B] focus:outline-none focus:ring-2 focus:ring-[#C8922A]"
-                />
-              </div>
-
-              <textarea
-                required
-                rows={4}
-                placeholder="What did you love about the aroma, combustion, and clean white ash?"
-                value={reviewComment}
-                onChange={(e) => setReviewComment(e.target.value)}
-                className="w-full rounded-xl border border-[#E3D4BD] bg-white p-3 text-xs text-[#0F0D0B] focus:outline-none focus:ring-2 focus:ring-[#C8922A]"
-              />
-
-              <Button type="submit" variant="primary" size="md">
-                Submit Sacred Review
-              </Button>
-            </form>
-          </div>
-        )}
 
         {/* Existing Reviews List */}
         <div className="space-y-4">
