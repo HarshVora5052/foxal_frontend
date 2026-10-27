@@ -470,20 +470,6 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
 
         {/* Existing Reviews List */}
         <div className="space-y-4">
-          {submittedReview && (
-            <div className="p-5 rounded-2xl bg-[#EBF2ED] border border-[#C7D9CD]">
-              <div className="flex items-center justify-between mb-2">
-                <Rating score={newRating} showScore={false} size="sm" />
-                <span className="text-[11px] font-semibold text-[#354E3C]">
-                  Just now · Verified Review
-                </span>
-              </div>
-              <h5 className="font-serif text-base font-bold text-[#0F0D0B]">
-                {reviewerName}
-              </h5>
-              <p className="text-xs text-[#5A534E] mt-1">{reviewComment}</p>
-            </div>
-          )}
 
           <div className="p-5 rounded-2xl bg-white border border-[#E3D4BD]">
             <div className="flex items-center justify-between mb-2">
